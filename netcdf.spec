@@ -1,7 +1,6 @@
 Name:           netcdf
 Version:        3.6.0
 Release:        0.2.beta6
-Epoch:          0
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -15,7 +14,7 @@ BuildRequires:  gcc-g77
 %package devel
 Summary:        Development files for netcdf-3
 Group:          Development/Libraries
-#Requires:       %{name} = %{epoch}:%{version}-%{release}
+#Requires:       %{name} = %{version}-%{release}
 
 %description
 NetCDF-3 (network Common Data Form ver3) is an interface for
@@ -27,7 +26,7 @@ the interface, library, and format support the creation, access, and
 sharing of scientific data. The NetCDF software was developed at the
 Unidata Program Center in Boulder, Colorado.
 
-NetCDF data is: 
+NetCDF data is:
 
    o Self-Describing: A NetCDF file includes information about the
      data it contains.
@@ -109,8 +108,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Sat Dec  4 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0beta6-0.fdr.0
 - upgrade to 3.6.0beta6
-- create separate devel package that does *not* depend upon 
-  the non-devel package and put the headers/libs in "netcdf-3" 
+- create separate devel package that does *not* depend upon
+  the non-devel package and put the headers/libs in "netcdf-3"
   subdirs for easy co-existance with upcoming netcdf-4
 
 * Thu Dec  2 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.12
@@ -120,7 +119,7 @@ rm -rf $RPM_BUILD_ROOT
 - headers in /usr/include/netcdf, libs in /usr/lib/netcdf
 
 * Mon Oct  4 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.10
-- Put headers in their own directory but leave the libraries in the 
+- Put headers in their own directory but leave the libraries in the
   %{_libdir} -- there are only two libs and the majority of other
   "*-devel" packages follow this pattern
 
