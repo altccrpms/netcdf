@@ -1,28 +1,31 @@
 Name:           netcdf
-Version:        3.5.1
-Release:        0.fdr.8
+Version:        3.6.0
+Release:        0.2.beta6
 Epoch:          0
-Summary:        Libraries for the Unidata network Common Data Form (NetCDF)
+Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.5.1.tar.Z
-Patch0:         netcdf-mandir.patch
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3_6_0-beta6.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-g77
 
+%package devel
+Summary:        Development files for netcdf-3
+Group:          Development/Libraries
+#Requires:       %{name} = %{epoch}:%{version}-%{release}
 
 %description
-NetCDF (network Common Data Form) is an interface for array-oriented
-data access and a freely-distributed collection of software libraries
-for C, Fortran, C++, and perl that provides an implementation of the
-interface.  The NetCDF library also defines a machine-independent
-format for representing scientific data. Together, the interface,
-library, and format support the creation, access, and sharing of
-scientific data. The NetCDF software was developed at the Unidata
-Program Center in Boulder, Colorado.
+NetCDF-3 (network Common Data Form ver3) is an interface for
+array-oriented data access and a freely-distributed collection of
+software libraries for C, Fortran, C++, and perl that provides an
+implementation of the interface.  The NetCDF library also defines a
+machine-independent format for representing scientific data. Together,
+the interface, library, and format support the creation, access, and
+sharing of scientific data. The NetCDF software was developed at the
+Unidata Program Center in Boulder, Colorado.
 
 NetCDF data is: 
 
@@ -45,21 +48,25 @@ NetCDF data is:
    o Sharable:  One writer and multiple readers may simultaneously
      access the same NetCDF file.
 
+%description devel
+This package contains the netCDF-3 header files, static libs, and man
+pages.
+
 
 %prep
-%setup -q
-%patch0 -p1
+cd $RPM_BUILD_DIR
+rm -rf netcdf-3_6_0-beta6*
+/usr/bin/gzip -dc $RPM_SOURCE_DIR/netcdf-3_6_0-beta6.tar.gz | tar -xf -
+cd netcdf-3_6_0-beta6
+[ `/usr/bin/id -u` = '0' ] && /bin/chown -Rhf root .
+[ `/usr/bin/id -u` = '0' ] && /bin/chgrp -Rhf root .
+/bin/chmod -Rf a+rX,u+w,g-w,o-w .
 
 
 %build
-cd src
-%ifarch x86_64
-   mv macros.make.in OLD_macros.make.in
-   cat OLD_macros.make.in | \
-     sed -e 's|exec_prefix)/lib|exec_prefix)/lib64|' > macros.make.in
-%endif
-export CPPFLAGS="-DNDEBUG -Df2cFortran -fPIC"
-export CFLAGS="$RPM_OPT_FLAGS -Df2cFortran -fPIC"
+cd $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src
+export FC="g77"
+export CPPFLAGS="-fPIC"
 %configure
 #  WARNING!
 #  The parallel build was tested and it does NOT work.
@@ -69,12 +76,15 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}
+mkdir -p $RPM_BUILD_ROOT/%{_includedir}/netcdf-3
+mkdir -p $RPM_BUILD_ROOT/%{_libdir}/netcdf-3
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}
-cd src
-%makeinstall
-rm -rf $RPM_BUILD_ROOT/%{_mandir}/man3f
+cd $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src
+%makeinstall INCDIR=${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 \
+  LIBDIR=${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 \
+  MANDIR=$RPM_BUILD_ROOT/%{_mandir}
+rm -rf $RPM_BUILD_ROOT/%{_mandir}/man3f*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -82,14 +92,47 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc src/COPYRIGHT src/README src/COMPATIBILITY
+%doc $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/COPYRIGHT $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/README $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/COMPATIBILITY
 %{_bindir}/*
-%{_libdir}/*.a
-%{_includedir}/*
-%{_mandir}/*/*
+%{_mandir}/man1/*
+
+%files devel
+%defattr(-,root,root,-)
+%{_includedir}/netcdf-3
+%{_libdir}/netcdf-3
+%{_mandir}/man3/*
 
 
 %changelog
+* Sun Dec 12 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0-0.2.beta6
+- fix naming scheme for pre-releases (per Michael Schwendt)
+
+* Sat Dec 11 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0beta6-0.fdr.2
+- For Fortran, use only g77 (ignore gfortran, even if its installed)
+
+* Tue Dec  7 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0beta6-0.fdr.1
+- remove "BuildRequires: gcc4-gfortran"
+
+* Sat Dec  4 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0beta6-0.fdr.0
+- upgrade to 3.6.0beta6
+- create separate devel package that does *not* depend upon 
+  the non-devel package and put the headers/libs in "netcdf-3" 
+  subdirs for easy co-existance with upcoming netcdf-4
+
+* Thu Dec  2 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.12
+- remove unneeded %configure flags
+
+* Wed Dec  1 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.11
+- headers in /usr/include/netcdf, libs in /usr/lib/netcdf
+
+* Mon Oct  4 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.10
+- Put headers in their own directory but leave the libraries in the 
+  %{_libdir} -- there are only two libs and the majority of other
+  "*-devel" packages follow this pattern
+
+* Sun Oct  3 2004 Michael Schwendt <mschwendt[AT]users.sf.net> - 0:3.5.1-0.fdr.9
+- add patch to install lib and headers into own tree
+
 * Sun Aug  1 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.8
 - added -fPIC so x86_64 build works with nco package
 
