@@ -54,13 +54,7 @@ pages.
 
 
 %prep
-cd $RPM_BUILD_DIR
-rm -rf netcdf-3_6_0-beta6*
-/usr/bin/gzip -dc $RPM_SOURCE_DIR/netcdf-3_6_0-beta6.tar.gz | tar -xf -
-cd netcdf-3_6_0-beta6
-[ `/usr/bin/id -u` = '0' ] && /bin/chown -Rhf root .
-[ `/usr/bin/id -u` = '0' ] && /bin/chgrp -Rhf root .
-/bin/chmod -Rf a+rX,u+w,g-w,o-w .
+%setup -q -n netcdf-3_6_0-beta6
 
 
 %build
