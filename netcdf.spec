@@ -1,15 +1,15 @@
 Name:           netcdf
 Version:        3.6.0
-Release:        0.2.beta6
+Release:        2.p1
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3_6_0-beta6.tar.gz
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.0-p1.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gcc-g77
+BuildRequires:  gcc-gfortran
 
 %package devel
 Summary:        Development files for netcdf-3
@@ -26,7 +26,7 @@ the interface, library, and format support the creation, access, and
 sharing of scientific data. The NetCDF software was developed at the
 Unidata Program Center in Boulder, Colorado.
 
-NetCDF data is:
+NetCDF data is: 
 
    o Self-Describing: A NetCDF file includes information about the
      data it contains.
@@ -53,12 +53,12 @@ pages.
 
 
 %prep
-%setup -q -n netcdf-3_6_0-beta6
+%setup -q -n netcdf-3.6.0-p1
 
 
 %build
-cd $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src
-export FC="g77"
+cd src
+export FC="gfortran"
 export CPPFLAGS="-fPIC"
 %configure
 #  WARNING!
@@ -73,11 +73,14 @@ mkdir -p $RPM_BUILD_ROOT/%{_includedir}/netcdf-3
 mkdir -p $RPM_BUILD_ROOT/%{_libdir}/netcdf-3
 mkdir -p $RPM_BUILD_ROOT/%{_datadir}
 mkdir -p $RPM_BUILD_ROOT/%{_mandir}
-cd $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src
+cd src
 %makeinstall INCDIR=${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 \
   LIBDIR=${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 \
-  MANDIR=$RPM_BUILD_ROOT/%{_mandir}
+  MANDIR=${RPM_BUILD_ROOT}/%{_mandir}
 rm -rf $RPM_BUILD_ROOT/%{_mandir}/man3f*
+find ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 -type f | xargs chmod 644
+find ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 -type f | xargs chmod 644
+find ${RPM_BUILD_ROOT}/%{_mandir} -type f | xargs chmod 644
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -85,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/COPYRIGHT $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/README $RPM_BUILD_DIR/netcdf-3_6_0-beta6/src/COMPATIBILITY
+%doc src/COPYRIGHT src/README
 %{_bindir}/*
 %{_mandir}/man1/*
 
@@ -97,6 +100,13 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Apr  5 2005 Ed Hill <ed@eh3.com> - 0:3.6.0-2.p1
+- update for gcc-gfortran
+- fix file permissions
+
+* Sat Mar  5 2005 Ed Hill <ed@eh3.com> - 0:3.6.0-1.p1
+- update for 3.6.0-p1 large-files-bug fix and remove the Epoch
+
 * Sun Dec 12 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0-0.2.beta6
 - fix naming scheme for pre-releases (per Michael Schwendt)
 
@@ -108,8 +118,8 @@ rm -rf $RPM_BUILD_ROOT
 
 * Sat Dec  4 2004 Ed Hill <eh3@mit.edu> - 0:3.6.0beta6-0.fdr.0
 - upgrade to 3.6.0beta6
-- create separate devel package that does *not* depend upon
-  the non-devel package and put the headers/libs in "netcdf-3"
+- create separate devel package that does *not* depend upon 
+  the non-devel package and put the headers/libs in "netcdf-3" 
   subdirs for easy co-existance with upcoming netcdf-4
 
 * Thu Dec  2 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.12
@@ -119,7 +129,7 @@ rm -rf $RPM_BUILD_ROOT
 - headers in /usr/include/netcdf, libs in /usr/lib/netcdf
 
 * Mon Oct  4 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.10
-- Put headers in their own directory but leave the libraries in the
+- Put headers in their own directory but leave the libraries in the 
   %{_libdir} -- there are only two libs and the majority of other
   "*-devel" packages follow this pattern
 
