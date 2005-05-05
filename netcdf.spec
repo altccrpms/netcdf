@@ -1,6 +1,9 @@
+%define dist .fc4
+%define fedora 4
+
 Name:           netcdf
 Version:        3.6.0
-Release:        2.p1
+Release:        3.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -14,7 +17,7 @@ BuildRequires:  gcc-gfortran
 %package devel
 Summary:        Development files for netcdf-3
 Group:          Development/Libraries
-#Requires:       %{name} = %{version}-%{release}
+Requires:       %{name} = %{version}-%{release}
 
 %description
 NetCDF-3 (network Common Data Form ver3) is an interface for
@@ -65,25 +68,27 @@ export CPPFLAGS="-fPIC"
 #  The parallel build was tested and it does NOT work.
 #  make %{?_smp_mflags}
 make
+unset FC
+unset CPPFLAGS
 
 %install
-rm -rf $RPM_BUILD_ROOT
-mkdir $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/%{_includedir}/netcdf-3
-mkdir -p $RPM_BUILD_ROOT/%{_libdir}/netcdf-3
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}
-mkdir -p $RPM_BUILD_ROOT/%{_mandir}
+rm -rf ${RPM_BUILD_ROOT}
+mkdir ${RPM_BUILD_ROOT}
+mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3
+mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
+mkdir -p ${RPM_BUILD_ROOT}%{_datadir}
+mkdir -p ${RPM_BUILD_ROOT}%{_mandir}
 cd src
 %makeinstall INCDIR=${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 \
   LIBDIR=${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 \
-  MANDIR=${RPM_BUILD_ROOT}/%{_mandir}
-rm -rf $RPM_BUILD_ROOT/%{_mandir}/man3f*
+  MANDIR=${RPM_BUILD_ROOT}%{_mandir}
+rm -rf ${RPM_BUILD_ROOT}%{_mandir}/man3f*
 find ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 -type f | xargs chmod 644
 find ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 -type f | xargs chmod 644
-find ${RPM_BUILD_ROOT}/%{_mandir} -type f | xargs chmod 644
+find ${RPM_BUILD_ROOT}%{_mandir} -type f | xargs chmod 644
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf ${RPM_BUILD_ROOT}
 
 
 %files
@@ -100,6 +105,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed May  5 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
+- make netcdf-devel require netcdf (bug #156748)
+- cleanup environment and paths
+
 * Tue Apr  5 2005 Ed Hill <ed@eh3.com> - 0:3.6.0-2.p1
 - update for gcc-gfortran
 - fix file permissions
