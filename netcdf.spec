@@ -1,9 +1,6 @@
-%define dist .fc4
-%define fedora 4
-
 Name:           netcdf
 Version:        3.6.0
-Release:        3.p1%{?dist}
+Release:        4.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -105,6 +102,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Mon May  9 2005 Ed Hill <ed@eh3.com> - 3.6.0-4.p1
+- remove hard-coded dist/fedora macros
+
 * Wed May  5 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
 - make netcdf-devel require netcdf (bug #156748)
 - cleanup environment and paths
