@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.0
-Release:        4.p1%{?dist}
+Release:        5.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -102,6 +102,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Fri Jun  3 2005 Ed Hill <ed@eh3.com> - 3.6.0-5.p1
+- bump for the build system
+
 * Mon May  9 2005 Ed Hill <ed@eh3.com> - 3.6.0-4.p1
 - remove hard-coded dist/fedora macros
 
