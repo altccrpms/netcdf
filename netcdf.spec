@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.0
-Release:        6.p1%{?dist}
+Release:        7.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -60,6 +60,7 @@ pages.
 cd src
 export FC="gfortran"
 export CPPFLAGS="-fPIC"
+export FFLAGS="-fPIC"
 %configure
 #  WARNING!
 #  The parallel build was tested and it does NOT work.
@@ -67,6 +68,7 @@ export CPPFLAGS="-fPIC"
 make
 unset FC
 unset CPPFLAGS
+unset FFLAGS
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -102,6 +104,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Fri Sep 29 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
+- add FFLAGS="-fPIC"
+
 * Fri Jun 13 2005 Ed Hill <ed@eh3.com> - 3.6.0-6.p1
 - rebuild
 
