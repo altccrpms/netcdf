@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.0
-Release:        7.p1%{?dist}
+Release:        8.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -66,6 +66,17 @@ export FFLAGS="-fPIC"
 #  The parallel build was tested and it does NOT work.
 #  make %{?_smp_mflags}
 make
+mkdir lib_g77
+cp libsrc/libnetcdf.a lib_g77
+make clean
+CPPFLAGS="-fPIC -DpgiFortran"
+%configure
+make
+#  The below seems to work but I worry that it would lead to odd runtime
+#  errors due to possible symbol collisions in the "cfortran.h" bits.  
+#  The safer thing to do is to simply build and install two libraries,  
+#  one for the older g77 and one for gfortran.
+#    ar cru libsrc/libnetcdf.a lib_g77/libnetcdf.a
 unset FC
 unset CPPFLAGS
 unset FFLAGS
@@ -81,6 +92,7 @@ cd src
 %makeinstall INCDIR=${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 \
   LIBDIR=${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 \
   MANDIR=${RPM_BUILD_ROOT}%{_mandir}
+cp lib_g77/libnetcdf.a ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3/libnetcdf_g77.a
 rm -rf ${RPM_BUILD_ROOT}%{_mandir}/man3f*
 find ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 -type f | xargs chmod 644
 find ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 -type f | xargs chmod 644
@@ -104,6 +116,10 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Sun Oct 16 2005 Ed Hill <ed@eh3.com> - 3.6.0-8.p1
+- building the library twice (once each for g77 and gfortran) 
+  fixes an annoying problem for people who need both compilers
+
 * Fri Sep 29 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
 - add FFLAGS="-fPIC"
 
