@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.0
-Release:        8.p1%{?dist}
+Release:        9.p1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -116,6 +116,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu Dec 22 2005 Orion Poplawski <orion@cora.nwra.com> - 3.6.0-9.p1
+- rebuild for gcc4.1
+
 * Sun Oct 16 2005 Ed Hill <ed@eh3.com> - 3.6.0-8.p1
 - building the library twice (once each for g77 and gfortran) 
   fixes an annoying problem for people who need both compilers
