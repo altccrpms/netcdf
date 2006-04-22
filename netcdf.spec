@@ -1,12 +1,12 @@
 Name:           netcdf
-Version:        3.6.0
-Release:        10.p1%{?dist}
+Version:        3.6.1
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.0-p1.tar.gz
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.1.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran
@@ -53,13 +53,14 @@ pages.
 
 
 %prep
-%setup -q -n netcdf-3.6.0-p1
+%setup -q
 
 
 %build
 cd src
-export FC="gfortran"
-export CPPFLAGS="-fPIC"
+export FC="g77"
+export F90=
+export CPPFLAGS="-fPIC -Df2cFortran"
 export FFLAGS="-fPIC"
 %configure
 #  WARNING!
@@ -69,7 +70,9 @@ make
 mkdir lib_g77
 cp libsrc/libnetcdf.a lib_g77
 make clean
-CPPFLAGS="-fPIC -DpgiFortran"
+export FC="gfortran"
+export F90="gfortran"
+export CPPFLAGS="-fPIC -DpgiFortran"
 %configure
 make
 #  The below seems to work but I worry that it would lead to odd runtime
@@ -78,6 +81,7 @@ make
 #  one for the older g77 and one for gfortran.
 #    ar cru libsrc/libnetcdf.a lib_g77/libnetcdf.a
 unset FC
+unset F90
 unset CPPFLAGS
 unset FFLAGS
 
@@ -116,6 +120,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Fri Apr 21 2006 Ed Hill <ed@eh3.com> - 3.6.1-1
+- update to upstream 3.6.1
+
 * Thu Feb 16 2006 Ed Hill <ed@eh3.com> - 3.6.0-10.p1
 - rebuild for new GCC
 
