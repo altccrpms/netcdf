@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -10,6 +10,7 @@ Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.1.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran
+BuildRequires:  compat-gcc-32-g77
 
 %package devel
 Summary:        Development files for netcdf-3
@@ -120,6 +121,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu May 11 2006 Ed Hill <ed@eh3.com> - 3.6.1-2
+- add missing BuildRequires for the g77 interface
+
 * Fri Apr 21 2006 Ed Hill <ed@eh3.com> - 3.6.1-1
 - update to upstream 3.6.1
 
