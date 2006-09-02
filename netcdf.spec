@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -121,6 +121,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Sat Sep  2 2006 Ed Hill <ed@eh3.com> - 3.6.1-3
+- rebuild for imminent FC-6 release
+
 * Thu May 11 2006 Ed Hill <ed@eh3.com> - 3.6.1-2
 - add missing BuildRequires for the g77 interface
 
