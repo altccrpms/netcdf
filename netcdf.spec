@@ -1,19 +1,24 @@
 Name:           netcdf
-Version:        3.6.1
-Release:        4%{?dist}
+Version:        3.6.2
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.1.tar.gz
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.2.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran
-BuildRequires:  compat-gcc-34-g77
+# BuildRequires:  compat-gcc-34-g77
 
 %package devel
 Summary:        Development files for netcdf-3
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+
+%package static
+Summary:        Static libs for netcdf-3
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
@@ -49,78 +54,71 @@ NetCDF data is:
      access the same NetCDF file.
 
 %description devel
-This package contains the netCDF-3 header files, static libs, and man
-pages.
+This package contains the netCDF-3 header files, shared devel libs, and 
+man pages.
 
+%description static
+This package contains the netCDF-3 static libs.
 
 %prep
 %setup -q
 
-
 %build
-cd src
-export FC="g77"
-export F90=
-export CPPFLAGS="-fPIC -Df2cFortran"
-export FFLAGS="-fPIC"
-%configure
-#  WARNING!
-#  The parallel build was tested and it does NOT work.
-#  make %{?_smp_mflags}
-make
-mkdir lib_g77
-cp libsrc/libnetcdf.a lib_g77
-make clean
 export FC="gfortran"
 export F90="gfortran"
-export CPPFLAGS="-fPIC -DpgiFortran"
-%configure
-make
-#  The below seems to work but I worry that it would lead to odd runtime
-#  errors due to possible symbol collisions in the "cfortran.h" bits.  
-#  The safer thing to do is to simply build and install two libraries,  
-#  one for the older g77 and one for gfortran.
-#    ar cru libsrc/libnetcdf.a lib_g77/libnetcdf.a
-unset FC
-unset F90
-unset CPPFLAGS
-unset FFLAGS
+export CPPFLAGS="-fPIC"
+export FFLAGS="-fPIC ${RPM_OPT_FLAGS}"
+export F90FLAGS="$FFLAGS"
+export FCFLAGS="$FFLAGS"
+%configure --enable-shared
+make %{?_smp_mflags}
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
-mkdir ${RPM_BUILD_ROOT}
+%makeinstall
 mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3
-mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
-mkdir -p ${RPM_BUILD_ROOT}%{_datadir}
-mkdir -p ${RPM_BUILD_ROOT}%{_mandir}
-cd src
-%makeinstall INCDIR=${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 \
-  LIBDIR=${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 \
-  MANDIR=${RPM_BUILD_ROOT}%{_mandir}
-cp lib_g77/libnetcdf.a ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3/libnetcdf_g77.a
-rm -rf ${RPM_BUILD_ROOT}%{_mandir}/man3f*
-find ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3 -type f | xargs chmod 644
-find ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3 -type f | xargs chmod 644
-find ${RPM_BUILD_ROOT}%{_mandir} -type f | xargs chmod 644
+/bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.* \
+  ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3
+/bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
+#
+#  Does the /usr/include/netcdf-3/netcdf.mod file really belong in 
+#  /usr/include/netcdf-3/ or should it go in /usr/lib/netcdf-3 ???
+#  I suppose this should be decided on after some testing since the 
+#  gfortran *.mod file appears to be ACSII text, not a binary file.
+#
+#  mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
+#  /bin/mv -f ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3/*.mod
+#    ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
+  
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
+%post -p /sbin/ldconfig
+
+%postun -p /sbin/ldconfig
 
 %files
 %defattr(-,root,root,-)
-%doc src/COPYRIGHT src/README
+%doc COPYRIGHT README
 %{_bindir}/*
+%{_libdir}/*.so.*
 %{_mandir}/man1/*
 
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/netcdf-3
-%{_libdir}/netcdf-3
+%{_libdir}/*.so
 %{_mandir}/man3/*
+
+%files static
+%defattr(-,root,root,-)
+%{_libdir}/*.a
 
 
 %changelog
+* Sat Mar 17 2007 Ed Hill <ed@eh3.com> - 3.6.2-1
+- 3.6.2 has a new build system supporting shared libs
+
 * Sat Sep  2 2006 Ed Hill <ed@eh3.com> - 3.6.1-4
 - switch to compat-gcc-34-g77 instead of compat-gcc-32-g77
 
