@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -9,7 +9,7 @@ URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.2.tar.bz2
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gcc-gfortran
+BuildRequires:  gcc-gfortran, gawk
 # BuildRequires:  compat-gcc-34-g77
 
 %package devel
@@ -120,6 +120,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Sat Aug 25 2007 Ed Hill <ed@eh3.com> - 3.6.2-4
+- add BR: gawk
+
 * Sat Aug 25 2007 Ed Hill <ed@eh3.com> - 3.6.2-3
 - rebuild for BuildID
 
