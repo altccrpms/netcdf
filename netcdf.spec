@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -120,6 +120,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Sat Aug 25 2007 Ed Hill <ed@eh3.com> - 3.6.2-3
+- rebuild for BuildID
+
 * Mon May 21 2007 Orion Poplawski <orion@cora.nwra.com> - 3.6.2-2
 - Run checks
 
