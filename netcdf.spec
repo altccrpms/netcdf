@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        3.6.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
@@ -120,6 +120,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Mon Feb 18 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 3.6.2-5
+- Autorebuild for GCC 4.3
+
 * Sat Aug 25 2007 Ed Hill <ed@eh3.com> - 3.6.2-4
 - add BR: gawk
 
