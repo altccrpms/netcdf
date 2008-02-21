@@ -1,12 +1,13 @@
 Name:           netcdf
 Version:        3.6.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.2.tar.bz2
+Patch0:         netcdf_gcc-3.3_needs_string-h.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -62,6 +63,7 @@ This package contains the netCDF-3 static libs.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 export FC="gfortran"
@@ -120,6 +122,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed Feb 20 2008 Ed Hill <ed@eh3.com> - 3.6.2-6
+- add patch that (hopefully?) allows the GCC 4.3 build to proceed
+
 * Mon Feb 18 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 3.6.2-5
 - Autorebuild for GCC 4.3
 
