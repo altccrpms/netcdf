@@ -73,7 +73,7 @@ export FFLAGS="-fPIC ${RPM_OPT_FLAGS}"
 export F90FLAGS="$FFLAGS"
 export FCFLAGS="$FFLAGS"
 %configure --enable-shared
-make %{?_smp_mflags}
+make
 
 %install
 %makeinstall
@@ -124,6 +124,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Wed Apr  2 2008 Orion Poplawski <orion@cora.nwra.com> - 3.6.2-7
 - Change patch to include <cstring>
+- Remove %%{?_smp_mflags} - not parallel build safe (fortran modules)
 
 * Wed Feb 20 2008 Ed Hill <ed@eh3.com> - 3.6.2-6
 - add patch that (hopefully?) allows the GCC 4.3 build to proceed
