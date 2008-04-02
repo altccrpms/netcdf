@@ -1,13 +1,13 @@
 Name:           netcdf
 Version:        3.6.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.2.tar.bz2
-Patch0:         netcdf_gcc-3.3_needs_string-h.patch
+Patch0:         netcdf-3.6.2-gcc43.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -63,7 +63,7 @@ This package contains the netCDF-3 static libs.
 
 %prep
 %setup -q
-%patch0 -p1
+%patch0 -p1 -b .gcc43
 
 %build
 export FC="gfortran"
@@ -122,6 +122,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed Apr  2 2008 Orion Poplawski <orion@cora.nwra.com> - 3.6.2-7
+- Change patch to include <cstring>
+
 * Wed Feb 20 2008 Ed Hill <ed@eh3.com> - 3.6.2-6
 - add patch that (hopefully?) allows the GCC 4.3 build to proceed
 
