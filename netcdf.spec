@@ -1,37 +1,38 @@
 Name:           netcdf
-Version:        3.6.2
-Release:        7%{?dist}
-Summary:        Libraries for the Unidata network Common Data Form (NetCDF v3)
+Version:        4.0.0
+Release:        0.1.beta2%{?dist}
+Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-3.6.2.tar.bz2
-Patch0:         netcdf-3.6.2-gcc43.patch
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.0-beta2.tar.gz
+Patch0:         netcdf-4.0.0-beta2-gcc4.3-cstring.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
-# BuildRequires:  compat-gcc-34-g77
+BuildRequires:  hdf5-devel
 
 %package devel
-Summary:        Development files for netcdf-3
+Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %package static
-Summary:        Static libs for netcdf-3
+Summary:        Static libs for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description
-NetCDF-3 (network Common Data Form ver3) is an interface for
-array-oriented data access and a freely-distributed collection of
-software libraries for C, Fortran, C++, and perl that provides an
-implementation of the interface.  The NetCDF library also defines a
-machine-independent format for representing scientific data. Together,
-the interface, library, and format support the creation, access, and
-sharing of scientific data. The NetCDF software was developed at the
-Unidata Program Center in Boulder, Colorado.
+
+NetCDF (network Common Data Form) is an interface for array-oriented 
+data access and a freely-distributed collection of software libraries 
+for C, Fortran, C++, and perl that provides an implementation of the 
+interface.  The NetCDF library also defines a machine-independent 
+format for representing scientific data.  Together, the interface, 
+library, and format support the creation, access, and sharing of 
+scientific data. The NetCDF software was developed at the Unidata 
+Program Center in Boulder, Colorado.
 
 NetCDF data is: 
 
@@ -55,15 +56,15 @@ NetCDF data is:
      access the same NetCDF file.
 
 %description devel
-This package contains the netCDF-3 header files, shared devel libs, and 
+This package contains the netCDF header files, shared devel libs, and 
 man pages.
 
 %description static
-This package contains the netCDF-3 static libs.
+This package contains the netCDF static libs.
 
 %prep
-%setup -q
-%patch0 -p1 -b .gcc43
+%setup -q -n netcdf-4.0-beta2
+%patch0 -p1
 
 %build
 export FC="gfortran"
@@ -77,10 +78,15 @@ make
 
 %install
 %makeinstall
-mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3
+mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.* \
-  ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3
+  ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
+/bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
+
+#  for backwards compatibility with previous Fedora versions
+( cd ${RPM_BUILD_ROOT}%{_includedir} ; ln -s ../netcdf netcdf-3 )
+
 #
 #  Does the /usr/include/netcdf-3/netcdf.mod file really belong in 
 #  /usr/include/netcdf-3/ or should it go in /usr/lib/netcdf-3 ???
@@ -99,9 +105,17 @@ make check
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 
-%post -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+/sbin/install-info %{_infodir}/netcdf.info.gz \
+    %{_infodir}/dir 2>/dev/null || :
 
-%postun -p /sbin/ldconfig
+%postun
+/sbin/ldconfig
+if [ "$1" = 0 ]; then
+  /sbin/install-info --delete %{_infodir}/netcdf.info.gz \
+    %{_infodir}/dir 2>/dev/null || :
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -109,9 +123,11 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_bindir}/*
 %{_libdir}/*.so.*
 %{_mandir}/man1/*
+%{_infodir}/*
 
 %files devel
 %defattr(-,root,root,-)
+%{_includedir}/netcdf
 %{_includedir}/netcdf-3
 %{_libdir}/*.so
 %{_mandir}/man3/*
@@ -122,6 +138,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed May  7 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.1.beta2
+- try out upstream 4.0.0-beta2
+
 * Wed Apr  2 2008 Orion Poplawski <orion@cora.nwra.com> - 3.6.2-7
 - Change patch to include <cstring>
 - Remove %%{?_smp_mflags} - not parallel build safe (fortran modules)
