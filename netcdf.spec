@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        0.1.beta2%{?dist}
+Release:        0.2.beta2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -12,6 +12,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
 BuildRequires:  hdf5-devel
+ExcludeArch:    ppc64
 
 %package devel
 Summary:        Development files for netcdf
@@ -138,6 +139,9 @@ fi
 
 
 %changelog
+* Wed May  8 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.2.beta2
+- ExcludeArch: ppc64 since it doesn't (for now) have hdf5
+
 * Wed May  7 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.1.beta2
 - try out upstream 4.0.0-beta2
 
