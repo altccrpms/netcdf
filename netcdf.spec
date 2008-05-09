@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        0.2.beta2%{?dist}
+Release:        0.3.beta2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -80,6 +80,9 @@ make
 %install
 %makeinstall
 mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf
+mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/gfortan/modules
+/bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.mod  \
+  ${RPM_BUILD_ROOT}%{_libdir}/gfortan/modules/
 /bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.* \
   ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
@@ -130,6 +133,7 @@ fi
 %defattr(-,root,root,-)
 %{_includedir}/netcdf
 %{_includedir}/netcdf-3
+%{_libdir}/gfortan/modules/*.mod
 %{_libdir}/*.so
 %{_mandir}/man3/*
 
@@ -139,7 +143,10 @@ fi
 
 
 %changelog
-* Wed May  8 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.2.beta2
+* Thu May  8 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.3.beta2
+- make package compliant with bz # 373861
+
+* Thu May  8 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.2.beta2
 - ExcludeArch: ppc64 since it doesn't (for now) have hdf5
 
 * Wed May  7 2008 Ed Hill <ed@eh3.com> - 4.0.0-0.1.beta2
