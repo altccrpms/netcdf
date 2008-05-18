@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        0.4.beta2%{?dist}
+Release:        0.5.beta2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -74,14 +74,15 @@ export FFLAGS="-fPIC ${RPM_OPT_FLAGS}"
 export F90FLAGS="$FFLAGS"
 export FCFLAGS="$FFLAGS"
 %configure --enable-shared
+# parallel build is broken, .mod file hasn't right deps %%{?_smp_mflags}
 make
 
 %install
-%makeinstall
+make install DESTDIR=${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf
-mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/gfortan/modules
+mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.mod  \
-  ${RPM_BUILD_ROOT}%{_libdir}/gfortan/modules/
+  ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.* \
   ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
@@ -89,17 +90,6 @@ mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/gfortan/modules
 
 #  for backwards compatibility with previous Fedora versions
 ( cd ${RPM_BUILD_ROOT}%{_includedir} ; ln -s ../netcdf netcdf-3 )
-
-#
-#  Does the /usr/include/netcdf-3/netcdf.mod file really belong in 
-#  /usr/include/netcdf-3/ or should it go in /usr/lib/netcdf-3 ???
-#  I suppose this should be decided on after some testing since the 
-#  gfortran *.mod file appears to be ACSII text, not a binary file.
-#
-#  mkdir -p ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
-#  /bin/mv -f ${RPM_BUILD_ROOT}%{_includedir}/netcdf-3/*.mod
-#    ${RPM_BUILD_ROOT}%{_libdir}/netcdf-3
-  
 
 %check
 make check
@@ -110,13 +100,13 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %post
 /sbin/ldconfig
-/sbin/install-info %{_infodir}/netcdf.info.gz \
+/sbin/install-info %{_infodir}/netcdf.info \
     %{_infodir}/dir 2>/dev/null || :
 
 %postun
 /sbin/ldconfig
 if [ "$1" = 0 ]; then
-  /sbin/install-info --delete %{_infodir}/netcdf.info.gz \
+  /sbin/install-info --delete %{_infodir}/netcdf.info \
     %{_infodir}/dir 2>/dev/null || :
 fi
 
@@ -132,7 +122,7 @@ fi
 %defattr(-,root,root,-)
 %{_includedir}/netcdf
 %{_includedir}/netcdf-3
-%{_libdir}/gfortan/modules/*.mod
+%{_fmoddir}/*.mod
 %{_libdir}/*.so
 %{_mandir}/man3/*
 
@@ -142,6 +132,10 @@ fi
 
 
 %changelog
+* Sun May 18 2008 Patrice Dumas <pertusus@free.fr> - 4.0.0-0.5.beta2
+- use %%{_fmoddir}
+- don't use %%makeinstall
+
 * Thu May 15 2008 Balint Cristian <rezso@rdsor.ro> - 4.0.0-0.4.beta2
 - re-enable ppc64 since hdf5 is now present for ppc64
 
@@ -237,14 +231,14 @@ fi
   subdirs for easy co-existance with upcoming netcdf-4
 
 * Thu Dec  2 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.12
-- remove unneeded %configure flags
+- remove unneeded %%configure flags
 
 * Wed Dec  1 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.11
 - headers in /usr/include/netcdf, libs in /usr/lib/netcdf
 
 * Mon Oct  4 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.10
 - Put headers in their own directory but leave the libraries in the 
-  %{_libdir} -- there are only two libs and the majority of other
+  %%{_libdir} -- there are only two libs and the majority of other
   "*-devel" packages follow this pattern
 
 * Sun Oct  3 2004 Michael Schwendt <mschwendt[AT]users.sf.net> - 0:3.5.1-0.fdr.9
@@ -269,7 +263,7 @@ fi
 - fix spelling
 
 * Thu Jul 15 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.2
-- removed "--prefix=/usr" from %configure
+- removed "--prefix=/usr" from %%configure
 
 * Wed Jul 14 2004 Ed Hill <eh3@mit.edu> - 0:3.5.1-0.fdr.1
 - Remove unnecessary parts and cleanup for submission
