@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        0.5.beta2%{?dist}
+Release:        0.6.beta2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -89,7 +89,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
 
 #  for backwards compatibility with previous Fedora versions
-( cd ${RPM_BUILD_ROOT}%{_includedir} ; ln -s ../netcdf netcdf-3 )
+( pushd ${RPM_BUILD_ROOT}%{_includedir} ; ln -s netcdf netcdf-3; popd )
 
 %check
 make check
@@ -132,6 +132,9 @@ fi
 
 
 %changelog
+* Thu May 29 2008 Balint Cristian <rezso@rdsor.ro> - 4.0.0-0.6.beta2
+- fix symlink to netcdf-3
+
 * Sun May 18 2008 Patrice Dumas <pertusus@free.fr> - 4.0.0-0.5.beta2
 - use %%{_fmoddir}
 - don't use %%makeinstall
