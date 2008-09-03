@@ -130,7 +130,7 @@ fi
 %changelog
 * Wed Sep  3 2008 Orion Poplawski <orion@cora.nwra.com> - 4.0.0-1
 - Update to 4.0 final
-- Drop netcdf-3 symlink (bug #337158)
+- Drop netcdf-3 symlink (bug #447158)
 - Update cstring patch, partially upstreamed
 
 * Thu May 29 2008 Balint Cristian <rezso@rdsor.ro> - 4.0.0-0.6.beta2
