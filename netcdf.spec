@@ -1,13 +1,13 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        0.6.beta2%{?dist}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.0-beta2.tar.gz
-Patch0:         netcdf-4.0.0-beta2-gcc4.3-cstring.patch
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.0.tar.gz
+Patch0:         netcdf-4.0.0-gcc4.3-cstring.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -63,7 +63,7 @@ man pages.
 This package contains the netCDF static libs.
 
 %prep
-%setup -q -n netcdf-4.0-beta2
+%setup -q -n netcdf-4.0
 %patch0 -p1
 
 %build
@@ -87,9 +87,6 @@ mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
   ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
-
-#  for backwards compatibility with previous Fedora versions
-( pushd ${RPM_BUILD_ROOT}%{_includedir} ; ln -s netcdf netcdf-3; popd )
 
 %check
 make check
@@ -121,7 +118,6 @@ fi
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/netcdf
-%{_includedir}/netcdf-3
 %{_fmoddir}/*.mod
 %{_libdir}/*.so
 %{_mandir}/man3/*
@@ -132,6 +128,11 @@ fi
 
 
 %changelog
+* Wed Sep  3 2008 Orion Poplawski <orion@cora.nwra.com> - 4.0.0-1
+- Update to 4.0 final
+- Drop netcdf-3 symlink (bug #337158)
+- Update cstring patch, partially upstreamed
+
 * Thu May 29 2008 Balint Cristian <rezso@rdsor.ro> - 4.0.0-0.6.beta2
 - fix symlink to netcdf-3
 
