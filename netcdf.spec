@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -128,6 +128,9 @@ fi
 
 
 %changelog
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.0-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
 * Wed Sep  3 2008 Orion Poplawski <orion@cora.nwra.com> - 4.0.0-1
 - Update to 4.0 final
 - Drop netcdf-3 symlink (bug #447158)
