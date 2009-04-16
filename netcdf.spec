@@ -1,12 +1,12 @@
 Name:           netcdf
-Version:        4.0.0
-Release:        2%{?dist}
+Version:        4.0.1
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.0.tar.gz
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Patch0:         netcdf-4.0.0-gcc4.3-cstring.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -63,7 +63,7 @@ man pages.
 This package contains the netCDF static libs.
 
 %prep
-%setup -q -n netcdf-4.0
+%setup -q
 %patch0 -p1
 
 %build
@@ -128,6 +128,9 @@ fi
 
 
 %changelog
+* Thu Apr 16 2009 Orion Poplawski <orion@cora.nwra.com> - 4.0.1-1
+- Update to 4.0.1
+
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
