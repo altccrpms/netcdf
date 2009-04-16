@@ -17,6 +17,7 @@ BuildRequires:  hdf5-devel
 Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       pkgconfig
 
 %package static
 Summary:        Static libs for netcdf
@@ -120,6 +121,7 @@ fi
 %{_includedir}/netcdf
 %{_fmoddir}/*.mod
 %{_libdir}/*.so
+%{_libdir}/pkgconfig/netcdf.pc
 %{_mandir}/man3/*
 
 %files static
@@ -130,6 +132,7 @@ fi
 %changelog
 * Thu Apr 16 2009 Orion Poplawski <orion@cora.nwra.com> - 4.0.1-1
 - Update to 4.0.1
+- Add pkgconfig file
 
 * Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
