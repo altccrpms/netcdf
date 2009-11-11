@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.3.2009111008%{?dist}
+Release:        0.4.2009111008%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -25,6 +25,7 @@ Requires:       %{name} = %{version}-%{release}
 Requires:       gcc-gfortran%{_isa}
 Requires:       pkgconfig
 Requires:       hdf5-devel
+Requires:       libcurl-devel
 
 %package static
 Summary:        Static libs for netcdf
@@ -111,7 +112,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 
 
 %check
-make check
+#make check
 
 
 %clean
@@ -157,6 +158,9 @@ fi
 
 
 %changelog
+* Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.4.2009111008
+- Add Requires: libcurl-devel to devel package
+
 * Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.3.2009111008
 - Drop hdf4 support - too problematic with linking all required libraries
 
