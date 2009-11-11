@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.1.2009111008%{?dist}
+Release:        0.2.2009111008%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -8,7 +8,9 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 #Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
-#Remove extraneous @FLIBS@ from netcdf.pc.  Was reported on mailling list
+#Fix configure to include the proper hdf4 libraries
+Patch1:         netcdf-4.1-beta2-hdf4.patch
+#Use pkgconfig in nc-config to avoid multi-lib issues
 Patch2:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -25,6 +27,8 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gcc-gfortran%{_isa}
 Requires:       pkgconfig
+Requires:       hdf-devel
+Requires:       hdf5-devel
 
 %package static
 Summary:        Static libs for netcdf
@@ -73,6 +77,7 @@ This package contains the netCDF static libs.
 
 %prep
 %setup -q -n netcdf-4.1-snapshot2009111008
+%patch1 -p1 -b .hdf4
 %patch2 -p1 -b .pkgconfig
 
 
@@ -133,13 +138,17 @@ fi
 %files
 %defattr(-,root,root,-)
 %doc COPYRIGHT README
-%{_bindir}/*
+%{_bindir}/nccopy
+%{_bindir}/ncdump
+%{_bindir}/ncgen
+%{_bindir}/ncgen3
 %{_libdir}/*.so.*
 %{_mandir}/man1/*
 %{_infodir}/*
 
 %files devel
 %defattr(-,root,root,-)
+%{_bindir}/nc-config
 %{_includedir}/netcdf
 %{_fmoddir}/*.mod
 %{_libdir}/*.so
@@ -152,6 +161,11 @@ fi
 
 
 %changelog
+* Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.2.2009111008
+- Add patch to use proper hdf4 libraries
+- Add Requires: hdf-devel, hdf5-devel to devel package
+- Move nc-config to devel package
+
 * Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.1.2009111008
 - Update to 4.1.0 beta 2 snapshot
 - Enable: netcdf-4, dap, hdf4, ncgen4, a lot more tests
