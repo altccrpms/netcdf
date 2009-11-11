@@ -1,22 +1,29 @@
 Name:           netcdf
-Version:        4.0.1
-Release:        2%{?dist}
+Version:        4.1.0
+Release:        0.1.2009111008%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
-URL:            http://my.unidata.ucar.edu/content/software/netcdf/index.html
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
-Patch0:         netcdf-4.0.0-gcc4.3-cstring.patch
+URL:            http://www.unidata.ucar.edu/software/netcdf/
+#Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
+Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
+#Remove extraneous @FLIBS@ from netcdf.pc.  Was reported on mailling list
+Patch2:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
+BuildRequires:  hdf-devel
 BuildRequires:  hdf5-devel
+BuildRequires:  libcurl-devel
+BuildRequires:  zlib-devel
+BuildRequires:  valgrind
 
 %package devel
 Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Requires:       gcc-gfortran%{_isa}
 Requires:       pkgconfig
 
 %package static
@@ -63,20 +70,32 @@ man pages.
 %description static
 This package contains the netCDF static libs.
 
+
 %prep
-%setup -q
-%patch0 -p1
+%setup -q -n netcdf-4.1-snapshot2009111008
+%patch2 -p1 -b .pkgconfig
+
 
 %build
+export F77="gfortran"
 export FC="gfortran"
-export F90="gfortran"
-export CPPFLAGS="-fPIC"
-export FFLAGS="-fPIC ${RPM_OPT_FLAGS}"
-export F90FLAGS="$FFLAGS"
+export FFLAGS="${RPM_OPT_FLAGS}"
 export FCFLAGS="$FFLAGS"
-%configure --enable-shared
-# parallel build is broken, .mod file hasn't right deps %%{?_smp_mflags}
-make
+%configure CPPFLAGS=-I%{_includedir}/hdf \
+           LDFLAGS=-L%{_libdir}/hdf \
+           --enable-shared \
+           --enable-netcdf-4 \
+           --enable-dap \
+           --enable-hdf4 \
+           --enable-ncgen4 \
+           --enable-extra-example-tests \
+           --enable-valgrind-tests \
+           --disable-dap-remote-tests
+# This goes into the wrong place now
+#           --enable-docs-install \
+
+make #%{?_smp_mflags}
+
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT}
@@ -89,12 +108,14 @@ mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
 
+
 %check
 make check
 
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
+
 
 %post
 /sbin/ldconfig
@@ -107,6 +128,7 @@ if [ "$1" = 0 ]; then
   /sbin/install-info --delete %{_infodir}/netcdf.info \
     %{_infodir}/dir 2>/dev/null || :
 fi
+
 
 %files
 %defattr(-,root,root,-)
@@ -130,6 +152,10 @@ fi
 
 
 %changelog
+* Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.1.2009111008
+- Update to 4.1.0 beta 2 snapshot
+- Enable: netcdf-4, dap, hdf4, ncgen4, a lot more tests
+
 * Sat Jul 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.0.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 

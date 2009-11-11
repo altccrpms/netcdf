@@ -1,0 +1,33 @@
+--- netcdf-4.1-beta2-snapshot2009102000/nc-config.in.pkgconfig	2009-09-24 12:42:06.000000000 -0600
++++ netcdf-4.1-beta2-snapshot2009102000/nc-config.in	2009-10-24 13:22:26.588585310 -0600
+@@ -8,7 +8,6 @@
+ 
+ prefix=@prefix@
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
+ includedir=${prefix}/include
+ 
+ cc="@CC@"
+@@ -16,8 +15,6 @@
+ fc="@FC@"
+ cflags=" -I${includedir}"
+ fflags="@FFLAGS@ @MOD_FLAG@${includedir}"
+-libs="-L${libdir} @NC_LIBS@"
+-flibs="-L${libdir} @NC_FLIBS@"
+ has_dap="@HAS_DAP@"
+ has_nc2="@HAS_NC2@"
+ has_nc4="@HAS_NC4@"
+@@ -134,11 +131,11 @@
+ 	;;
+ 
+     --libs)
+-       	echo $libs
++       	pkg-config netcdf --libs
+        	;;
+ 
+     --flibs)
+-       	echo $flibs
++       	pkg-config netcdf --flibs
+        	;;
+ 
+     --has-dap)
