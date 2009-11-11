@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.2.2009111008%{?dist}
+Release:        0.3.2009111008%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -8,14 +8,11 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 #Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
-#Fix configure to include the proper hdf4 libraries
-Patch1:         netcdf-4.1-beta2-hdf4.patch
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch2:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
-BuildRequires:  hdf-devel
 BuildRequires:  hdf5-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
@@ -27,7 +24,6 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       gcc-gfortran%{_isa}
 Requires:       pkgconfig
-Requires:       hdf-devel
 Requires:       hdf5-devel
 
 %package static
@@ -77,7 +73,6 @@ This package contains the netCDF static libs.
 
 %prep
 %setup -q -n netcdf-4.1-snapshot2009111008
-%patch1 -p1 -b .hdf4
 %patch2 -p1 -b .pkgconfig
 
 
@@ -91,11 +86,12 @@ export FCFLAGS="$FFLAGS"
            --enable-shared \
            --enable-netcdf-4 \
            --enable-dap \
-           --enable-hdf4 \
            --enable-ncgen4 \
            --enable-extra-example-tests \
            --enable-valgrind-tests \
            --disable-dap-remote-tests
+#Need to be able to properly list all hdf4 library deps and location
+#           --enable-hdf4 \
 # This goes into the wrong place now
 #           --enable-docs-install \
 
@@ -161,6 +157,9 @@ fi
 
 
 %changelog
+* Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.3.2009111008
+- Drop hdf4 support - too problematic with linking all required libraries
+
 * Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.2.2009111008
 - Add patch to use proper hdf4 libraries
 - Add Requires: hdf-devel, hdf5-devel to devel package
