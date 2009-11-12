@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.4.2009111008%{?dist}
+Release:        0.5.2009111008%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -8,8 +8,12 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 #Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
+#Explicitly link libnetcdf.so to the hdf5 libraries
+Patch1:         netcdf-4.1-beta2-hdf5.patch
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch2:         netcdf-4.1-beta2-pkgconfig.patch
+#Remove some unneeded library linkages
+Patch3:         netcdf-4.1-beta2-libs.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -74,7 +78,9 @@ This package contains the netCDF static libs.
 
 %prep
 %setup -q -n netcdf-4.1-snapshot2009111008
+%patch1 -p1 -b .hdf5
 %patch2 -p1 -b .pkgconfig
+%patch3 -p1 -b .libs
 
 
 %build
@@ -82,8 +88,7 @@ export F77="gfortran"
 export FC="gfortran"
 export FFLAGS="${RPM_OPT_FLAGS}"
 export FCFLAGS="$FFLAGS"
-%configure CPPFLAGS=-I%{_includedir}/hdf \
-           LDFLAGS=-L%{_libdir}/hdf \
+%configure \
            --enable-shared \
            --enable-netcdf-4 \
            --enable-dap \
@@ -158,6 +163,9 @@ fi
 
 
 %changelog
+* Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.5.2009111008
+- Explicitly link libnetcdf to the hdf libraries, don't link with -lcurl
+
 * Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.4.2009111008
 - Add Requires: libcurl-devel to devel package
 
