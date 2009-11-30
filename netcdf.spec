@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.5.2009111008%{?dist}
+Release:        0.6.2009113000%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -8,12 +8,8 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 #Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
-#Explicitly link libnetcdf.so to the hdf5 libraries
-Patch1:         netcdf-4.1-beta2-hdf5.patch
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch2:         netcdf-4.1-beta2-pkgconfig.patch
-#Remove some unneeded library linkages
-Patch3:         netcdf-4.1-beta2-libs.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -77,10 +73,9 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n netcdf-4.1-snapshot2009111008
-%patch1 -p1 -b .hdf5
+%setup -q -n netcdf-4.1-snapshot2009113000
+autoreconf
 %patch2 -p1 -b .pkgconfig
-%patch3 -p1 -b .libs
 
 
 %build
@@ -98,8 +93,6 @@ export FCFLAGS="$FFLAGS"
            --disable-dap-remote-tests
 #Need to be able to properly list all hdf4 library deps and location
 #           --enable-hdf4 \
-# This goes into the wrong place now
-#           --enable-docs-install \
 
 make #%{?_smp_mflags}
 
@@ -146,6 +139,7 @@ fi
 %{_bindir}/ncgen3
 %{_libdir}/*.so.*
 %{_mandir}/man1/*
+%{_datadir}/doc/netcdf
 %{_infodir}/*
 
 %files devel
@@ -163,6 +157,13 @@ fi
 
 
 %changelog
+* Mon Nov 30 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.6.2009113000
+- Update snapshot, removes SZIP defines from header
+
+* Fri Nov 13 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.5.2009111309
+- Update snapshot
+- Docs are installed now
+
 * Wed Nov 11 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.5.2009111008
 - Explicitly link libnetcdf to the hdf libraries, don't link with -lcurl
 
