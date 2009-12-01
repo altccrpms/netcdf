@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.6.2009113000%{?dist}
+Release:        0.6.2009120100%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -73,7 +73,7 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n netcdf-4.1-snapshot2009113000
+%setup -q -n netcdf-4.1-snapshot2009120100
 autoreconf
 %patch2 -p1 -b .pkgconfig
 
@@ -157,7 +157,7 @@ fi
 
 
 %changelog
-* Mon Nov 30 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.6.2009113000
+* Tue Dec 1 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.6.2009120100
 - Update snapshot, removes SZIP defines from header
 
 * Fri Nov 13 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.5.2009111309
