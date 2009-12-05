@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.6.2009120100%{?dist}
+Release:        0.7.2009120100%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -99,12 +99,9 @@ make #%{?_smp_mflags}
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT}
-mkdir -p ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.mod  \
   ${RPM_BUILD_ROOT}%{_fmoddir}
-/bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.* \
-  ${RPM_BUILD_ROOT}%{_includedir}/netcdf
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
 
@@ -145,7 +142,11 @@ fi
 %files devel
 %defattr(-,root,root,-)
 %{_bindir}/nc-config
-%{_includedir}/netcdf
+%{_includedir}/ncvalues.h
+%{_includedir}/netcdf.h
+%{_includedir}/netcdf.hh
+%{_includedir}/netcdf.inc
+%{_includedir}/netcdfcpp.h
 %{_fmoddir}/*.mod
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/netcdf.pc
@@ -157,6 +158,9 @@ fi
 
 
 %changelog
+* Sat Dec 5 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.7.2009120100
+- Leave include files in /usr/include
+
 * Tue Dec 1 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.6.2009120100
 - Update snapshot, removes SZIP defines from header
 
