@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.7.2009120100%{?dist}
+Release:        0.8.2010020100%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -9,7 +9,7 @@ URL:            http://www.unidata.ucar.edu/software/netcdf/
 #Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
 Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
-Patch2:         netcdf-4.1-beta2-pkgconfig.patch
+Patch0:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -73,9 +73,8 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n netcdf-4.1-snapshot2009120100
-autoreconf
-%patch2 -p1 -b .pkgconfig
+%setup -q -n netcdf-4.1-snapshot2010020100
+%patch0 -p1 -b .pkgconfig
 
 
 %build
@@ -107,7 +106,7 @@ mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
 
 
 %check
-#make check
+make check
 
 
 %clean
@@ -158,6 +157,10 @@ fi
 
 
 %changelog
+* Mon Feb 1 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.8.2010020100
+- Update snapshot, pkgconfig patch
+- Re-enable make check
+
 * Sat Dec 5 2009 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.7.2009120100
 - Leave include files in /usr/include
 
