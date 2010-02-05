@@ -1,19 +1,18 @@
 Name:           netcdf
 Version:        4.1.0
-Release:        0.8.2010020100%{?dist}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-#Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-%{version}.tar.gz
-Source0:        ftp://ftp.unidata.ucar.edu/pub/netcdf/snapshot/netcdf-4-daily.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
-BuildRequires:  hdf5-devel
+BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
 BuildRequires:  valgrind
@@ -73,7 +72,7 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n netcdf-4.1-snapshot2010020100
+%setup -q -n %{name}-4.1
 %patch0 -p1 -b .pkgconfig
 
 
@@ -157,6 +156,9 @@ fi
 
 
 %changelog
+* Fri Feb 5 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-1
+- Update to 4.1.0 final
+
 * Mon Feb 1 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-0.8.2010020100
 - Update snapshot, pkgconfig patch
 - Re-enable make check
