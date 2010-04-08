@@ -1,12 +1,12 @@
 Name:           netcdf
-Version:        4.1.0
+Version:        4.1.1
 Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.1.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-4.1-beta2-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -72,7 +72,7 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n %{name}-4.1
+%setup -q
 %patch0 -p1 -b .pkgconfig
 
 
@@ -156,6 +156,9 @@ fi
 
 
 %changelog
+* Thu Apr 8 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-1
+- Update to 4.1.1
+
 * Fri Feb 5 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.0-1
 - Update to 4.1.0 final
 
