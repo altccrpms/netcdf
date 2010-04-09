@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -9,6 +9,7 @@ URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.1.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-4.1-beta2-pkgconfig.patch
+Patch1:         netcdf-4.1.1-fflags.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -74,6 +75,7 @@ This package contains the netCDF static libs.
 %prep
 %setup -q
 %patch0 -p1 -b .pkgconfig
+%patch1 -p1 -b .fflags
 
 
 %build
@@ -156,6 +158,9 @@ fi
 
 
 %changelog
+* Fri Apr 9 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-2
+- Add patch to cleanup nc-config --fflags
+
 * Thu Apr 8 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-1
 - Update to 4.1.1
 

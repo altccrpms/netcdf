@@ -1,0 +1,13 @@
+--- netcdf-4.1.1/nc-config.in.fflags	2010-04-08 14:05:40.063132547 -0600
++++ netcdf-4.1.1/nc-config.in	2010-04-09 13:53:26.923928260 -0600
+@@ -13,8 +13,8 @@
+ cc="@CC@"
+ cxx="@CXX@"
+ fc="@FC@"
+-cflags=" -I${includedir}"
+-fflags="@FFLAGS@ @MOD_FLAG@${includedir}"
++cflags="-I${includedir}"
++fflags="@MOD_FLAG@${includedir}"
+ has_dap="@HAS_DAP@"
+ has_nc2="@HAS_NC2@"
+ has_nc4="@HAS_NC4@"
