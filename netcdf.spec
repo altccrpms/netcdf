@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -10,6 +10,8 @@ Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.1.ta
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-4.1-beta2-pkgconfig.patch
 Patch1:         netcdf-4.1.1-fflags.patch
+#Explicitly link libnetcdf.so agains -lhdf5_hl -lhdf5, reported upstream
+Patch2:         netcdf-4.1.1-hdf5.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -76,6 +78,7 @@ This package contains the netCDF static libs.
 %setup -q
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
+%patch2 -p1 -b .hdf5
 
 
 %build
@@ -158,6 +161,9 @@ fi
 
 
 %changelog
+* Mon Apr 19 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-3
+- Explicitly link libnetcdf.so against -lhdf5_hl -lhdf5
+
 * Fri Apr 9 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-2
 - Add patch to cleanup nc-config --fflags
 

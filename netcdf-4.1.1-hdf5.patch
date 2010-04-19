@@ -1,0 +1,12 @@
+diff -up netcdf-4.1.1/libsrc4/Makefile.in.hdf5 netcdf-4.1.1/libsrc4/Makefile.in
+--- netcdf-4.1.1/libsrc4/Makefile.in.hdf5	2010-04-19 09:44:45.333650779 -0600
++++ netcdf-4.1.1/libsrc4/Makefile.in	2010-04-19 09:44:45.338649501 -0600
+@@ -886,7 +886,7 @@ clean-libLTLIBRARIES:
+ 	  rm -f "$${dir}/so_locations"; \
+ 	done
+ libnetcdf.la: $(libnetcdf_la_OBJECTS) $(libnetcdf_la_DEPENDENCIES) 
+-	$(libnetcdf_la_LINK) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) $(LIBS)
++	$(libnetcdf_la_LINK) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) -lhdf5_hl -lhdf5 $(LIBS)
+ 
+ clean-checkPROGRAMS:
+ 	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
