@@ -5,8 +5,8 @@ diff -up netcdf-4.1.1/libsrc4/Makefile.in.hdf5 netcdf-4.1.1/libsrc4/Makefile.in
  	  rm -f "$${dir}/so_locations"; \
  	done
  libnetcdf.la: $(libnetcdf_la_OBJECTS) $(libnetcdf_la_DEPENDENCIES) 
--	$(libnetcdf_la_LINK) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) $(LIBS)
-+	$(libnetcdf_la_LINK) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) -lhdf5_hl -lhdf5 $(LIBS)
+-	$(libnetcdf_la_LINK) -rpath $(libdir) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) $(LIBS)
++	$(libnetcdf_la_LINK) -rpath $(libdir) $(libnetcdf_la_OBJECTS) $(libnetcdf_la_LIBADD) -lhdf5_hl -lhdf5 $(LIBS)
  
  clean-checkPROGRAMS:
  	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
