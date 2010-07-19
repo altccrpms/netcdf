@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -18,7 +18,9 @@ BuildRequires:  gcc-gfortran, gawk
 BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
+%ifnarch s390 s390x
 BuildRequires:  valgrind
+%endif
 
 %package devel
 Summary:        Development files for netcdf
@@ -92,7 +94,9 @@ export FCFLAGS="$FFLAGS"
            --enable-dap \
            --enable-ncgen4 \
            --enable-extra-example-tests \
+%ifnarch s390 s390x
            --enable-valgrind-tests \
+%endif
            --disable-dap-remote-tests
 #Need to be able to properly list all hdf4 library deps and location
 #           --enable-hdf4 \
@@ -161,6 +165,9 @@ fi
 
 
 %changelog
+* Mon Jul 19 2010 Dan Horák <dan[at]danny.cz> - 4.1.1-4
+- no valgrind on s390(x)
+
 * Mon Apr 19 2010 Orion Poplawski <orion@cora.nwra.com> - 4.1.1-3
 - Explicitly link libnetcdf.so against -lhdf5_hl -lhdf5
 
