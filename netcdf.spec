@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -165,6 +165,9 @@ fi
 
 
 %changelog
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Mon Jul 19 2010 Dan Horák <dan[at]danny.cz> - 4.1.1-4
 - no valgrind on s390(x)
 
