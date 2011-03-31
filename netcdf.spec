@@ -1,17 +1,19 @@
 Name:           netcdf
-Version:        4.1.1
-Release:        4%{?dist}
+Version:        4.1.2
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-4.1.1.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
-Patch0:         netcdf-4.1-beta2-pkgconfig.patch
-Patch1:         netcdf-4.1.1-fflags.patch
-#Explicitly link libnetcdf.so agains -lhdf5_hl -lhdf5, reported upstream
-Patch2:         netcdf-4.1.1-hdf5.patch
+Patch0:         netcdf-4.1.2-pkgconfig.patch
+#Strip FFLAGS from nc-config
+Patch1:         netcdf-4.1.2-fflags.patch
+# Need to add -lm to libnetcdf4
+Patch2:         netcdf-4.1.2-libm.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -80,7 +82,7 @@ This package contains the netCDF static libs.
 %setup -q
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
-%patch2 -p1 -b .hdf5
+%patch2 -p1 -b .libm
 
 
 %build
@@ -94,14 +96,8 @@ export FCFLAGS="$FFLAGS"
            --enable-dap \
            --enable-ncgen4 \
            --enable-extra-example-tests \
-%ifnarch s390 s390x
-           --enable-valgrind-tests \
-%endif
            --disable-dap-remote-tests
-#Need to be able to properly list all hdf4 library deps and location
-#           --enable-hdf4 \
-
-make #%{?_smp_mflags}
+make %{?_smp_mflags}
 
 
 %install
@@ -143,7 +139,6 @@ fi
 %{_bindir}/ncgen3
 %{_libdir}/*.so.*
 %{_mandir}/man1/*
-%{_datadir}/doc/netcdf
 %{_infodir}/*
 
 %files devel
@@ -165,6 +160,10 @@ fi
 
 
 %changelog
+* Thu Mar 31 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.2-1
+- Update to 4.1.2 (soname bump)
+- Add patch to add -lm to libnetcdf4
+
 * Mon Jul 19 2010 Dan Horák <dan[at]danny.cz> - 4.1.1-4
 - no valgrind on s390(x)
 

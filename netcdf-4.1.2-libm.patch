@@ -1,0 +1,11 @@
+--- netcdf-4.1.2/libsrc4/Makefile.in.libm	2011-03-29 17:14:04.000000000 -0600
++++ netcdf-4.1.2/libsrc4/Makefile.in	2011-03-31 11:09:36.683165942 -0600
+@@ -312,7 +312,7 @@
+ # Tell libtool what libraries are we will depend on.
+ 
+ # Always link to hdf5_hl, hdf5, and z.
+-libnetcdf4_la_LIBADD = $(am__append_12) $(am__append_13) -lhdf5_hl \
++libnetcdf4_la_LIBADD = -lm $(am__append_12) $(am__append_13) -lhdf5_hl \
+ 	-lhdf5 -lz
+ all: all-am
+ 
