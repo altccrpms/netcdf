@@ -164,6 +164,9 @@ fi
 - Update to 4.1.2 (soname bump)
 - Add patch to add -lm to libnetcdf4
 
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1.1-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Mon Jul 19 2010 Dan Horák <dan[at]danny.cz> - 4.1.1-4
 - no valgrind on s390(x)
 
