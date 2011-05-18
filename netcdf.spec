@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -160,6 +160,9 @@ fi
 
 
 %changelog
+* Tue May 17 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.2-2
+- Rebuild for hdf5 1.8.7
+
 * Thu Mar 31 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.2-1
 - Update to 4.1.2 (soname bump)
 - Add patch to add -lm to libnetcdf4
