@@ -1,5 +1,5 @@
 Name:           netcdf
-Version:        4.1.2
+Version:        4.1.3
 Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
@@ -9,11 +9,9 @@ URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
-Patch0:         netcdf-4.1.2-pkgconfig.patch
+Patch0:         netcdf-pkgconfig.patch
 #Strip FFLAGS from nc-config
-Patch1:         netcdf-4.1.2-fflags.patch
-# Need to add -lm to libnetcdf4
-Patch2:         netcdf-4.1.2-libm.patch
+Patch1:         netcdf-fflags.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  gcc-gfortran, gawk
@@ -79,10 +77,9 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-rc1-snapshot2011052620
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
-%patch2 -p1 -b .libm
 
 
 %build
@@ -160,6 +157,11 @@ fi
 
 
 %changelog
+* Tue Jun 21 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-1
+- Update to 4.1.3
+- Update pkgconfig and fflags patches
+- Drop libm patch fixed upstream
+
 * Thu Mar 31 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.2-1
 - Update to 4.1.2 (soname bump)
 - Add patch to add -lm to libnetcdf4

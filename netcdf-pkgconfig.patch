@@ -1,6 +1,6 @@
-diff -up netcdf-4.1.2-beta2-snapshot2010120222/nc-config.in.pkgconfig netcdf-4.1.2-beta2-snapshot2010120222/nc-config.in
---- netcdf-4.1.2-beta2-snapshot2010120222/nc-config.in.pkgconfig	2010-12-02 22:20:11.000000000 -0700
-+++ netcdf-4.1.2-beta2-snapshot2010120222/nc-config.in	2010-12-03 10:02:30.598407327 -0700
+diff -up netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.pkgconfig netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in
+--- netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.pkgconfig	2011-05-26 20:23:15.000000000 -0600
++++ netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in	2011-05-27 15:04:12.823601895 -0600
 @@ -8,7 +8,6 @@
  
  prefix=@prefix@
@@ -11,9 +11,9 @@ diff -up netcdf-4.1.2-beta2-snapshot2010120222/nc-config.in.pkgconfig netcdf-4.1
  cc="@CC@"
 @@ -16,8 +15,6 @@ cxx="@CXX@"
  fc="@FC@"
- cflags=" -I${includedir} @EXTERN_CPPFLAGS@" 
+ cflags=" -I${includedir} @CPPFLAGS@" 
  fflags="@FFLAGS@ @MOD_FLAG@${includedir}"
--libs="-L${libdir} @NC_LIBS@ @EXTERN_LDFLAGS@"
+-libs="-L${libdir} @NC_LIBS@"
 -flibs="-L${libdir} @NC_FLIBS@"
  has_dap="@HAS_DAP@"
  has_nc2="@HAS_NC2@"

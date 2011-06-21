@@ -1,0 +1,12 @@
+diff -up netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.fflags netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in
+--- netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.fflags	2011-05-27 15:05:06.000000000 -0600
++++ netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in	2011-05-27 15:06:08.066331777 -0600
+@@ -14,7 +14,7 @@ cc="@CC@"
+ cxx="@CXX@"
+ fc="@FC@"
+ cflags=" -I${includedir} @CPPFLAGS@" 
+-fflags="@FFLAGS@ @MOD_FLAG@${includedir}"
++fflags="@MOD_FLAG@${includedir}"
+ has_dap="@HAS_DAP@"
+ has_nc2="@HAS_NC2@"
+ has_nc4="@HAS_NC4@"
