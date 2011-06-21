@@ -77,7 +77,7 @@ This package contains the netCDF static libs.
 
 
 %prep
-%setup -q -n %{name}-%{version}-rc1-snapshot2011052620
+%setup -q
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
 
