@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -157,7 +157,7 @@ fi
 
 
 %changelog
-* Thu Aug 11 2011 Peter Robinson <pbrobinson@gmail.com> - 4.1.3-2
+* Thu Aug 11 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 4.1.3-2
 - Add ARM to valgrind excludes
 
 * Tue Jun 21 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-1
