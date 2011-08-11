@@ -18,7 +18,7 @@ BuildRequires:  gcc-gfortran, gawk
 BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
-%ifnarch s390 s390x
+%ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
 %endif
 
@@ -157,6 +157,9 @@ fi
 
 
 %changelog
+* Thu Aug 11 2011 Peter Robinson <pbrobinson@gmail.com> - 4.1.3-2
+- Add ARM to valgrind excludes
+
 * Tue Jun 21 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-1
 - Update to 4.1.3
 - Update pkgconfig and fflags patches
