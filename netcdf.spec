@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.1.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -21,6 +21,7 @@ BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
 %endif
+Requires:       hdf5 = %{?_hdf5_version}
 
 %package devel
 Summary:        Development files for netcdf
@@ -37,7 +38,6 @@ Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 
 %description
-
 NetCDF (network Common Data Form) is an interface for array-oriented 
 data access and a freely-distributed collection of software libraries 
 for C, Fortran, C++, and perl that provides an implementation of the 
@@ -157,6 +157,9 @@ fi
 
 
 %changelog
+* Fri Nov 18 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-3
+- Rebuild for hdf5 1.8.8, add explicit requires
+
 * Thu Aug 11 2011 Peter Robinson <pbrobinson@fedoraproject.org> - 4.1.3-2
 - Add ARM to valgrind excludes
 
