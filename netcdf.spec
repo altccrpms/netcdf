@@ -21,7 +21,7 @@ BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
 %endif
-Requires:       hdf5 = %{?_hdf5_version}
+Requires:       hdf5 = %{_hdf5_version}
 
 %package devel
 Summary:        Development files for netcdf
