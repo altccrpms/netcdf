@@ -1,12 +1,12 @@
 Name:           netcdf
-Version:        4.1.3
-Release:        3%{?dist}
+Version:        4.2
+Release:        0.1.rc1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc1.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -14,8 +14,10 @@ Patch0:         netcdf-pkgconfig.patch
 Patch1:         netcdf-fflags.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:  gcc-gfortran, gawk
+BuildRequires:  chrpath
+BuildRequires:  doxygen
 BuildRequires:  hdf5-devel >= 1.8.4
+BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
@@ -27,7 +29,6 @@ Requires:       hdf5 = %{_hdf5_version}
 Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
-Requires:       gcc-gfortran%{_isa}
 Requires:       pkgconfig
 Requires:       hdf5-devel
 Requires:       libcurl-devel
@@ -69,29 +70,24 @@ NetCDF data is:
      access the same NetCDF file.
 
 %description devel
-This package contains the netCDF header files, shared devel libs, and 
+This package contains the netCDF C header files, shared devel libs, and 
 man pages.
 
 %description static
-This package contains the netCDF static libs.
+This package contains the netCDF C static libs.
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-rc1
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
 
 
 %build
-export F77="gfortran"
-export FC="gfortran"
-export FFLAGS="${RPM_OPT_FLAGS}"
-export FCFLAGS="$FFLAGS"
 %configure \
            --enable-shared \
            --enable-netcdf-4 \
            --enable-dap \
-           --enable-ncgen4 \
            --enable-extra-example-tests \
            --disable-dap-remote-tests
 make %{?_smp_mflags}
@@ -99,11 +95,8 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=${RPM_BUILD_ROOT}
-mkdir -p ${RPM_BUILD_ROOT}%{_fmoddir}
-/bin/mv ${RPM_BUILD_ROOT}%{_includedir}/*.mod  \
-  ${RPM_BUILD_ROOT}%{_fmoddir}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
-/bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
+chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
 
 
 %check
@@ -114,17 +107,9 @@ make check
 rm -rf ${RPM_BUILD_ROOT}
 
 
-%post
-/sbin/ldconfig
-/sbin/install-info %{_infodir}/netcdf.info \
-    %{_infodir}/dir 2>/dev/null || :
+%post -p /sbin/ldconfig
 
-%postun
-/sbin/ldconfig
-if [ "$1" = 0 ]; then
-  /sbin/install-info --delete %{_infodir}/netcdf.info \
-    %{_infodir}/dir 2>/dev/null || :
-fi
+%postun -p /sbin/ldconfig
 
 
 %files
@@ -136,17 +121,11 @@ fi
 %{_bindir}/ncgen3
 %{_libdir}/*.so.*
 %{_mandir}/man1/*
-%{_infodir}/*
 
 %files devel
 %defattr(-,root,root,-)
 %{_bindir}/nc-config
-%{_includedir}/ncvalues.h
 %{_includedir}/netcdf.h
-%{_includedir}/netcdf.hh
-%{_includedir}/netcdf.inc
-%{_includedir}/netcdfcpp.h
-%{_fmoddir}/*.mod
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/netcdf.pc
 %{_mandir}/man3/*
@@ -157,6 +136,10 @@ fi
 
 
 %changelog
+* Thu Jan 12 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.1.rc1
+- Update to 4.2-rc1
+- Fortran and C++ APIs are now in separate packages
+
 * Fri Nov 18 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-3
 - Rebuild for hdf5 1.8.8, add explicit requires
 
