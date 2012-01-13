@@ -136,9 +136,12 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
-* Thu Jan 12 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.1.rc1
+* Fri Jan 13 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.1.rc1
 - Update to 4.2-rc1
 - Fortran and C++ APIs are now in separate packages
+
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1.3-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
 * Fri Nov 18 2011 Orion Poplawski <orion@cora.nwra.com> - 4.1.3-3
 - Rebuild for hdf5 1.8.8, add explicit requires
