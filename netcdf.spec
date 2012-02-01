@@ -22,22 +22,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  valgrind
 %endif
 
-%package devel
-Summary:        Development files for netcdf
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       gcc-gfortran%{_isa}
-Requires:       pkgconfig
-Requires:       hdf5-devel
-Requires:       libcurl-devel
-
-%package static
-Summary:        Static libs for netcdf
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-
 %description
-
 NetCDF (network Common Data Form) is an interface for array-oriented 
 data access and a freely-distributed collection of software libraries 
 for C, Fortran, C++, and perl that provides an implementation of the 
@@ -68,9 +53,25 @@ NetCDF data is:
    o Sharable:  One writer and multiple readers may simultaneously
      access the same NetCDF file.
 
+
+%package devel
+Summary:        Development files for netcdf
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+Requires:       gcc-gfortran%{_isa}
+Requires:       pkgconfig
+Requires:       hdf5-devel
+Requires:       libcurl-devel
+
 %description devel
 This package contains the netCDF header files, shared devel libs, and 
 man pages.
+
+
+%package static
+Summary:        Static libs for netcdf
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
 
 %description static
 This package contains the netCDF static libs.
