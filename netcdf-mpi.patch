@@ -1,0 +1,17 @@
+diff -up netcdf-4.1.3/libdispatch/parallel.c.mpi netcdf-4.1.3/libdispatch/parallel.c
+--- netcdf-4.1.3/libdispatch/parallel.c.mpi	2011-06-10 07:35:00.000000000 -0600
++++ netcdf-4.1.3/libdispatch/parallel.c	2012-02-10 10:46:18.229286019 -0700
+@@ -29,13 +29,8 @@ nc_create_par(const char *path, int cmod
+        !(cmode & NC_PNETCDF))
+       return NC_EINVAL;
+ 
+-#ifdef HAVE_MPI_COMM_F2C
+-   comm_c = MPI_Comm_f2c(comm);
+-   info_c = MPI_Info_f2c(info);
+-#else
+    comm_c = (MPI_Comm)comm;
+    info_c = (MPI_Info)info;
+-#endif
+ 
+    data.comm = comm_c;
+    data.info = info_c;

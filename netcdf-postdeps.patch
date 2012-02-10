@@ -1,0 +1,32 @@
+diff -up netcdf-4.1.3/configure.postdeps netcdf-4.1.3/configure
+--- netcdf-4.1.3/configure.postdeps	2011-06-17 14:52:05.000000000 -0600
++++ netcdf-4.1.3/configure	2012-02-07 21:41:30.207617024 -0700
+@@ -21293,15 +21293,16 @@ if { { eval echo "\"\$as_me\":${as_linen
+   # Sentinel used to keep track of whether or not we are before
+   # the conftest object file.
+   pre_test_object_deps_done=no
+-
++set -x
+   for p in `eval "$output_verbose_link_cmd"`; do
+     case ${prev}${p} in
+ 
+     -L* | -R* | -l*)
+-       # Some compilers place space between "-{L,R}" and the path.
++       # Some compilers place space between "-{L,R,l}" and the path.
+        # Remove the space.
+        if test $p = "-L" ||
+-          test $p = "-R"; then
++          test $p = "-R" ||
++          test $p = "-l"; then
+ 	 prev=$p
+ 	 continue
+        fi
+@@ -21370,7 +21371,7 @@ if { { eval echo "\"\$as_me\":${as_linen
+ 
+     esac
+   done
+-
++set +x
+   # Clean up.
+   rm -f a.out a.exe
+ else
