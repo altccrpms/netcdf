@@ -138,10 +138,10 @@ rm -rf ${RPM_BUILD_ROOT}
 %changelog
 * Tue Mar 6 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.2.rc2
 - Update to 4.2-rc2
-
-* Fri Jan 13 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.1.rc1
-- Update to 4.2-rc1
 - Fortran and C++ APIs are now in separate packages
+
+* Tue Feb 28 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1.3-5
+- Rebuilt for c++ ABI breakage
 
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.1.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
