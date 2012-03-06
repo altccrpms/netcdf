@@ -1,12 +1,12 @@
 Name:           netcdf
 Version:        4.2
-Release:        0.1.rc1%{?dist}
+Release:        0.2.rc2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc1.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc2.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -78,7 +78,7 @@ This package contains the netCDF C static libs.
 
 
 %prep
-%setup -q -n %{name}-%{version}-rc1
+%setup -q -n %{name}-%{version}-rc2
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
 
@@ -136,6 +136,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Tue Mar 6 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.2.rc2
+- Update to 4.2-rc2
+
 * Fri Jan 13 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.1.rc1
 - Update to 4.2-rc1
 - Fortran and C++ APIs are now in separate packages
