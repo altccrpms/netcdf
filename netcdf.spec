@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.2
-Release:        0.3.rc2%{?dist}
+Release:        0.4.rc2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -264,6 +264,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %files devel
+%doc examples
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
 %{_libdir}/*.so
@@ -317,6 +318,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed Mar 7 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.4.rc2
+- Ship examples with -devel
+
 * Wed Mar 7 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.3.rc2
 - Enable MPI builds
 
