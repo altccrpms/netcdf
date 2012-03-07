@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.2
-Release:        0.2.rc2%{?dist}
+Release:        0.3.rc2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -23,20 +23,30 @@ BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
 %endif
+#mpiexec segfaults if ssh is not present
+#https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
+BuildRequires:  openssh-clients
 Requires:       hdf5 = %{_hdf5_version}
 
-%package devel
-Summary:        Development files for netcdf
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       pkgconfig
-Requires:       hdf5-devel
-Requires:       libcurl-devel
+%global with_mpich2 1
+%global with_openmpi 1
+%if 0%{?rhel}
+%ifarch ppc64
+# No mpich2 on ppc64 in EL
+%global with_mpich2 0
+%endif
+%endif
+%ifarch s390 s390x
+# No openmpi on s390(x)
+%global with_openmpi 0
+%endif
 
-%package static
-Summary:        Static libs for netcdf
-Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
+%if %{with_mpich2}
+%global mpi_list mpich2
+%endif
+%if %{with_openmpi}
+%global mpi_list %{?mpi_list} openmpi
+%endif
 
 %description
 NetCDF (network Common Data Form) is an interface for array-oriented 
@@ -69,12 +79,97 @@ NetCDF data is:
    o Sharable:  One writer and multiple readers may simultaneously
      access the same NetCDF file.
 
+
+%package devel
+Summary:        Development files for netcdf
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+Requires:       pkgconfig
+Requires:       hdf5-devel
+Requires:       libcurl-devel
+
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
 man pages.
 
+
+%package static
+Summary:        Static libs for netcdf
+Group:          Development/Libraries
+Requires:       %{name} = %{version}-%{release}
+
 %description static
 This package contains the netCDF C static libs.
+
+
+%if %{with_mpich2}
+%package mpich2
+Summary: NetCDF mpich2 libraries
+Group: Development/Libraries
+Requires: mpich2
+BuildRequires: mpich2-devel
+BuildRequires: hdf5-mpich2-devel >= 1.8.4
+
+%description mpich2
+NetCDF parallel mpich2 libraries
+
+
+%package mpich2-devel
+Summary: NetCDF mpich2 development files
+Group: Development/Libraries
+Requires: %{name}-mpich2%{?_isa} = %{version}-%{release}
+Requires: mpich2
+Requires: pkgconfig
+Requires: hdf5-mpich2-devel
+Requires: libcurl-devel
+
+%description mpich2-devel
+NetCDF parallel mpich2 development files
+
+
+%package mpich2-static
+Summary: NetCDF mpich2 static libraries
+Group: Development/Libraries
+Requires: %{name}-mpich2-devel%{?_isa} = %{version}-%{release}
+
+%description mpich2-static
+NetCDF parallel mpich2 static libraries
+%endif
+
+
+%if %{with_openmpi}
+%package openmpi
+Summary: NetCDF openmpi libraries
+Group: Development/Libraries
+Requires: openmpi
+BuildRequires: openmpi-devel
+BuildRequires: hdf5-openmpi-devel >= 1.8.4
+
+%description openmpi
+NetCDF parallel openmpi libraries
+
+
+%package openmpi-devel
+Summary: NetCDF openmpi development files
+Group: Development/Libraries
+Requires: %{name}-openmpi%{_isa} = %{version}-%{release}
+Requires: openmpi-devel
+Requires: pkgconfig
+Requires: hdf5-openmpi-devel
+Requires: libcurl-devel
+
+%description openmpi-devel
+NetCDF parallel openmpi development files
+
+
+%package openmpi-static
+Summary: NetCDF openmpi static libraries
+Group: Development/Libraries
+Requires: %{name}-openmpi-devel%{?_isa} = %{version}-%{release}
+
+%description openmpi-static
+NetCDF parallel openmpi static libraries
+%endif
 
 
 %prep
@@ -84,23 +179,70 @@ This package contains the netCDF C static libs.
 
 
 %build
-%configure \
-           --enable-shared \
-           --enable-netcdf-4 \
-           --enable-dap \
-           --enable-extra-example-tests \
-           --disable-dap-remote-tests
+#Do out of tree builds
+%global _configure ../configure
+#Common configure options
+%global configure_opts \\\
+           --enable-shared \\\
+           --enable-netcdf-4 \\\
+           --enable-dap \\\
+           --enable-extra-example-tests \\\
+           --disable-dap-remote-tests \\\
+%{nil}
+
+# Serial build
+mkdir build
+pushd build
+ln -s ../configure .
+%configure %{configure_opts}
 make %{?_smp_mflags}
+popd
+
+# MPI builds
+export CC=mpicc
+for mpi in %{mpi_list}
+do
+  mkdir $mpi
+  pushd $mpi
+  module load $mpi-%{_arch}
+  ln -s ../configure .
+  %configure %{configure_opts} \
+    --libdir=%{_libdir}/$mpi/lib \
+    --bindir=%{_libdir}/$mpi/bin \
+    --sbindir=%{_libdir}/$mpi/sbin \
+    --includedir=%{_includedir}/$mpi-%{_arch} \
+    --datarootdir=%{_libdir}/$mpi/share \
+    --mandir=%{_libdir}/$mpi/share/man \
+    --enable-parallel-tests
+  make %{?_smp_mflags}
+  module purge
+  popd
+done
 
 
 %install
-make install DESTDIR=${RPM_BUILD_ROOT}
+make -C build install DESTDIR=${RPM_BUILD_ROOT}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
+/bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
+for mpi in %{mpi_list}
+do
+  module load $mpi-%{_arch}
+  make -C $mpi install DESTDIR=${RPM_BUILD_ROOT}
+  rm $RPM_BUILD_ROOT/%{_libdir}/$mpi/lib/*.la
+  chrpath --delete ${RPM_BUILD_ROOT}/%{_libdir}/$mpi/bin/nc{copy,dump,gen,gen3}
+  module purge
+done
 
 
 %check
-make check
+make -C build check
+for mpi in mpich2 openmpi
+do
+  module load $mpi-%{_arch}
+  make -C $mpi check
+  module purge
+done
 
 
 %clean
@@ -113,7 +255,6 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %files
-%defattr(-,root,root,-)
 %doc COPYRIGHT README
 %{_bindir}/nccopy
 %{_bindir}/ncdump
@@ -123,7 +264,6 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man1/*
 
 %files devel
-%defattr(-,root,root,-)
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
 %{_libdir}/*.so
@@ -131,11 +271,55 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_mandir}/man3/*
 
 %files static
-%defattr(-,root,root,-)
 %{_libdir}/*.a
+
+%if %{with_mpich2}
+%files mpich2
+%doc COPYRIGHT README
+%{_libdir}/mpich2/bin/nccopy
+%{_libdir}/mpich2/bin/ncdump
+%{_libdir}/mpich2/bin/ncgen
+%{_libdir}/mpich2/bin/ncgen3
+%{_libdir}/mpich2/lib/*.so.*
+%doc %{_libdir}/mpich2/share/man/man1/*.1*
+
+%files mpich2-devel
+%{_libdir}/mpich2/bin/nc-config
+%{_includedir}/mpich2-%{_arch}
+%{_libdir}/mpich2/lib/*.so
+%{_libdir}/mpich2/lib/pkgconfig/%{name}.pc
+%doc %{_libdir}/mpich2/share/man/man3/*.3*
+
+%files mpich2-static
+%{_libdir}/mpich2/lib/*.a
+%endif
+
+%if %{with_openmpi}
+%files openmpi
+%doc COPYRIGHT README
+%{_libdir}/openmpi/bin/nccopy
+%{_libdir}/openmpi/bin/ncdump
+%{_libdir}/openmpi/bin/ncgen
+%{_libdir}/openmpi/bin/ncgen3
+%{_libdir}/openmpi/lib/*.so.*
+%doc %{_libdir}/openmpi/share/man/man1/*.1*
+
+%files openmpi-devel
+%{_libdir}/openmpi/bin/nc-config
+%{_includedir}/openmpi-%{_arch}
+%{_libdir}/openmpi/lib/*.so
+%{_libdir}/openmpi/lib/pkgconfig/%{name}.pc
+%doc %{_libdir}/openmpi/share/man/man3/*.3*
+
+%files openmpi-static
+%{_libdir}/openmpi/lib/*.a
+%endif
 
 
 %changelog
+* Wed Mar 7 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.3.rc2
+- Enable MPI builds
+
 * Tue Mar 6 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.2.rc2
 - Update to 4.2-rc2
 - Fortran and C++ APIs are now in separate packages
