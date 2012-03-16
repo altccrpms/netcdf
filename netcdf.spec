@@ -1,12 +1,12 @@
 Name:           netcdf
 Version:        4.2
-Release:        0.4.rc2%{?dist}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc2.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -173,7 +173,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-%{version}-rc2
+%setup -q
 %patch0 -p1 -b .pkgconfig
 %patch1 -p1 -b .fflags
 
@@ -318,6 +318,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Fri Mar 16 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-1
+- Update to 4.2 final
+
 * Wed Mar 7 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-0.4.rc2
 - Ship examples with -devel
 
