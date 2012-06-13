@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -236,6 +236,7 @@ done
 
 
 %check
+%ifnarch s390
 make -C build check
 for mpi in %{mpi_list}
 do
@@ -243,6 +244,7 @@ do
   make -C $mpi check
   module purge
 done
+%endif
 
 
 %clean
@@ -318,6 +320,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed Jun 13 2012 Dan Horák <dan[at]danny.cz> - 4.2-5
+- temporarily disable checks on s390 (memory corruption and stuck build)
+
 * Tue May 15 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2-4
 - Rebuild with hdf5 1.8.9
 
