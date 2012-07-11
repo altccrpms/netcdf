@@ -1,17 +1,15 @@
 Name:           netcdf
-Version:        4.2
-Release:        5%{?dist}
+Version:        4.2.1
+Release:        0.1.rc1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc1.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
-#Strip FFLAGS from nc-config
-Patch1:         netcdf-fflags.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  chrpath
@@ -173,9 +171,8 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-rc1
 %patch0 -p1 -b .pkgconfig
-%patch1 -p1 -b .fflags
 
 
 %build
@@ -320,6 +317,11 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Wed Jul 11 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1-0.1.rc1
+- Update to 4.2.1 rc1
+- Rebase pkgconfig patch
+- Drop fflags patch, upstream now calls nf-config
+
 * Wed Jun 13 2012 Dan Horák <dan[at]danny.cz> - 4.2-5
 - temporarily disable checks on s390 (memory corruption and stuck build)
 

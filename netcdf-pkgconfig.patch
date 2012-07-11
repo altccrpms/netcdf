@@ -1,7 +1,7 @@
-diff -up netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.pkgconfig netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in
---- netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.pkgconfig	2011-05-26 20:23:15.000000000 -0600
-+++ netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in	2011-05-27 15:04:12.823601895 -0600
-@@ -8,7 +8,6 @@
+diff -up netcdf-4.2.1-rc1/nc-config.in.pkgconfig netcdf-4.2.1-rc1/nc-config.in
+--- netcdf-4.2.1-rc1/nc-config.in.pkgconfig	2012-06-18 12:33:10.000000000 -0600
++++ netcdf-4.2.1-rc1/nc-config.in	2012-06-20 16:44:29.292019812 -0600
+@@ -6,12 +6,10 @@
  
  prefix=@prefix@
  exec_prefix=${prefix}
@@ -9,26 +9,17 @@ diff -up netcdf-4.1.3-rc1-snapshot2011052620/nc-config.in.pkgconfig netcdf-4.1.3
  includedir=${prefix}/include
  
  cc="@CC@"
-@@ -16,8 +15,6 @@ cxx="@CXX@"
- fc="@FC@"
  cflags=" -I${includedir} @CPPFLAGS@" 
- fflags="@FFLAGS@ @MOD_FLAG@${includedir}"
 -libs="-L${libdir} @NC_LIBS@"
--flibs="-L${libdir} @NC_FLIBS@"
  has_dap="@HAS_DAP@"
  has_nc2="@HAS_NC2@"
  has_nc4="@HAS_NC4@"
-@@ -141,11 +138,11 @@ while test $# -gt 0; do
- 	;;
+@@ -189,7 +187,7 @@ while test $# -gt 0; do
+        	;;
  
       --libs)
 -       	echo $libs
 +       	pkg-config netcdf --libs
         	;;
  
-     --flibs)
--       	echo $flibs
-+       	pkg-config netcdf --flibs
-        	;;
- 
-     --has-dap)
+     --prefix)
