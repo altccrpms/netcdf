@@ -1,12 +1,12 @@
 Name:           netcdf
 Version:        4.2.1
-Release:        0.2.rc1%{?dist}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc1.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -171,7 +171,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-%{version}-rc1
+%setup -q -n %{name}-%{version}
 %patch0 -p1 -b .pkgconfig
 
 
@@ -317,6 +317,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Sun Jul 22 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1-1
+- Update to 4.2.1 final
+
 * Fri Jul 20 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.2.1-0.2.rc1
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
