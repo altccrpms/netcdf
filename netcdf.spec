@@ -1,5 +1,5 @@
 Name:           netcdf
-Version:        4.2.1
+Version:        4.2.1.1
 Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
@@ -317,6 +317,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Fri Aug 3 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-1
+- Update to 4.2.1.1
+
 * Sun Jul 22 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1-1
 - Update to 4.2.1 final
 
