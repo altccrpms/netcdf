@@ -1,4 +1,23 @@
-Name:           netcdf
+# AltCCRPMS
+%global _prefix /opt/%{name}/%{version}
+%global _sysconfdir %{_prefix}/etc
+%global _defaultdocdir %{_prefix}/share/doc
+%global _infodir %{_prefix}/share/info
+%global _mandir %{_prefix}/share/man
+
+%global _cc_name intel
+%global _cc_name_suffix -%{_cc_name}
+
+#We don't want to be beholden to the proprietary libraries
+%global    _use_internal_dependency_generator 0
+%global    __find_requires %{nil}
+
+# Non gcc compilers don't generate build ids
+%undefine _missing_build_ids_terminate_build
+
+%global shortname netcdf
+
+Name:           netcdf42%{?_cc_name_suffix}
 Version:        4.2.1.1
 Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
@@ -8,13 +27,15 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
+Source1:        netcdf.module.in
+Source2:        netcdf-mpi.module.in
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
-BuildRequires:  hdf5-devel >= 1.8.4
+BuildRequires:  hdf5%{?_cc_name_suffix}-devel >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
@@ -24,9 +45,10 @@ BuildRequires:  valgrind
 #mpiexec segfaults if ssh is not present
 #https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
 BuildRequires:  openssh-clients
-Requires:       hdf5 = %{_hdf5_version}
+Requires:       hdf5%{?_cc_name_suffix} = 1.8.9
+Provides:       %{shortname}%{?_cc_name_suffix} = %{version}-%{release}
 
-%global with_mpich2 1
+%global with_mpich2 0
 %global with_openmpi 1
 %if 0%{?rhel}
 %ifarch ppc64
@@ -83,8 +105,9 @@ Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       pkgconfig
-Requires:       hdf5-devel
+Requires:       hdf5%{?_cc_name_suffix}-devel
 Requires:       libcurl-devel
+Provides:       %{shortname}%{?_cc_name_suffix}-devel = %{version}-%{release}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -95,6 +118,7 @@ man pages.
 Summary:        Static libs for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
+Provides:       %{shortname}%{?_cc_name_suffix}-static = %{version}-%{release}
 
 %description static
 This package contains the netCDF C static libs.
@@ -106,7 +130,8 @@ Summary: NetCDF mpich2 libraries
 Group: Development/Libraries
 Requires: mpich2
 BuildRequires: mpich2-devel
-BuildRequires: hdf5-mpich2-devel >= 1.8.4
+BuildRequires: hdf5-mpich2%{?_cc_name_suffix}-devel >= 1.8.4
+Provides:       %{shortname}-mpich2%{?_cc_name_suffix} = %{version}-%{release}
 
 %description mpich2
 NetCDF parallel mpich2 libraries
@@ -118,8 +143,9 @@ Group: Development/Libraries
 Requires: %{name}-mpich2%{?_isa} = %{version}-%{release}
 Requires: mpich2
 Requires: pkgconfig
-Requires: hdf5-mpich2-devel
+Requires: hdf5-mpich2%{?_cc_name_suffix}-devel
 Requires: libcurl-devel
+Provides: %{shortname}-mpich2%{?_cc_name_suffix}-devel = %{version}-%{release}
 
 %description mpich2-devel
 NetCDF parallel mpich2 development files
@@ -129,6 +155,7 @@ NetCDF parallel mpich2 development files
 Summary: NetCDF mpich2 static libraries
 Group: Development/Libraries
 Requires: %{name}-mpich2-devel%{?_isa} = %{version}-%{release}
+Provides: %{shortname}-mpich2%{?_cc_name_suffix}-static = %{version}-%{release}
 
 %description mpich2-static
 NetCDF parallel mpich2 static libraries
@@ -141,7 +168,8 @@ Summary: NetCDF openmpi libraries
 Group: Development/Libraries
 Requires: openmpi
 BuildRequires: openmpi-devel
-BuildRequires: hdf5-openmpi-devel >= 1.8.4
+BuildRequires: hdf5-openmpi%{?_cc_name_suffix}-devel >= 1.8.4
+Provides:       %{shortname}-openmpi%{?_cc_name_suffix} = %{version}-%{release}
 
 %description openmpi
 NetCDF parallel openmpi libraries
@@ -153,8 +181,9 @@ Group: Development/Libraries
 Requires: %{name}-openmpi%{_isa} = %{version}-%{release}
 Requires: openmpi-devel
 Requires: pkgconfig
-Requires: hdf5-openmpi-devel
+Requires: hdf5-openmpi%{?_cc_name_suffix}-devel
 Requires: libcurl-devel
+Provides: %{shortname}-openmpi%{?_cc_name_suffix}-devel = %{version}-%{release}
 
 %description openmpi-devel
 NetCDF parallel openmpi development files
@@ -164,6 +193,7 @@ NetCDF parallel openmpi development files
 Summary: NetCDF openmpi static libraries
 Group: Development/Libraries
 Requires: %{name}-openmpi-devel%{?_isa} = %{version}-%{release}
+Provides: %{shortname}-openmpi%{?_cc_name_suffix}-static = %{version}-%{release}
 
 %description openmpi-static
 NetCDF parallel openmpi static libraries
@@ -171,7 +201,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n netcdf-%{version}
 %patch0 -p1 -b .pkgconfig
 
 
@@ -190,9 +220,19 @@ NetCDF parallel openmpi static libraries
 # Serial build
 mkdir build
 pushd build
+export CC=icc
+export CXX=icpc
+export F9X=ifort
+export CFLAGS="-O3 -axSSE2,SSE4.1,SSE4.2"
+export CXXFLAGS="$CFLAGS"
+export FFLAGS="$CFLAGS"
+module load hdf5%{?_cc_name_suffix}
+export CPPFLAGS=-I$HDF5_HOME/include
+export LDFLAGS=-L$HDF5_HOME/%{_lib}
 ln -s ../configure .
 %configure %{configure_opts}
 make %{?_smp_mflags}
+module purge
 popd
 
 # MPI builds
@@ -201,7 +241,10 @@ for mpi in %{mpi_list}
 do
   mkdir $mpi
   pushd $mpi
-  module load $mpi-%{_arch}
+  module load mpi/$mpi%{?_cc_name_suffix}
+  module load hdf5-$mpi%{?_cc_name_suffix}
+  export CPPFLAGS=-I$HDF5_INCLUDE
+  export LDFLAGS=-L$HDF5_LIB
   ln -s ../configure .
   %configure %{configure_opts} \
     --libdir=%{_libdir}/$mpi/lib \
@@ -224,20 +267,34 @@ chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
 for mpi in %{mpi_list}
 do
-  module load $mpi-%{_arch}
+  module load mpi/$mpi%{?_cc_name_suffix}
   make -C $mpi install DESTDIR=${RPM_BUILD_ROOT}
   rm $RPM_BUILD_ROOT/%{_libdir}/$mpi/lib/*.la
   chrpath --delete ${RPM_BUILD_ROOT}/%{_libdir}/$mpi/bin/nc{copy,dump,gen,gen3}
   module purge
 done
 
+# AltCCRPMS
+# Make the environment-modules file
+mkdir -p %{buildroot}/etc/modulefiles/netcdf%{?_cc_name_suffix}
+# Since we're doing our own substitution here, use our own definitions.
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{?_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/netcdf%{?_cc_name_suffix}/%{version}-%{_arch}
+for mpi in %{mpi_list}
+do
+mkdir -p %{buildroot}/etc/modulefiles/netcdf-${mpi}%{?_cc_name_suffix}
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{?_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/netcdf-${mpi}%{?_cc_name_suffix}/%{version}-%{_arch}
+done
+
 
 %check
 %ifnarch s390
+module load hdf5%{?_cc_name_suffix}
 make -C build check
+module purge
 for mpi in %{mpi_list}
 do
-  module load $mpi-%{_arch}
+  module load mpi/$mpi%{?_cc_name_suffix}
+  module load hdf5-$mpi%{?_cc_name_suffix}
   make -C $mpi check
   module purge
 done
@@ -255,6 +312,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %doc COPYRIGHT README
+/etc/modulefiles/netcdf%{?_cc_name_suffix}/%{version}-%{_arch}
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
@@ -276,6 +334,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_mpich2}
 %files mpich2
 %doc COPYRIGHT README
+/etc/modulefiles/netcdf-mpich2%{?_cc_name_suffix}/%{version}-%{_arch}
 %{_libdir}/mpich2/bin/nccopy
 %{_libdir}/mpich2/bin/ncdump
 %{_libdir}/mpich2/bin/ncgen
@@ -287,7 +346,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/mpich2/bin/nc-config
 %{_includedir}/mpich2-%{_arch}
 %{_libdir}/mpich2/lib/*.so
-%{_libdir}/mpich2/lib/pkgconfig/%{name}.pc
+%{_libdir}/mpich2/lib/pkgconfig/netcdf.pc
 %doc %{_libdir}/mpich2/share/man/man3/*.3*
 
 %files mpich2-static
@@ -297,6 +356,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_openmpi}
 %files openmpi
 %doc COPYRIGHT README
+/etc/modulefiles/netcdf-openmpi%{?_cc_name_suffix}/%{version}-%{_arch}
 %{_libdir}/openmpi/bin/nccopy
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
@@ -308,7 +368,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/openmpi/bin/nc-config
 %{_includedir}/openmpi-%{_arch}
 %{_libdir}/openmpi/lib/*.so
-%{_libdir}/openmpi/lib/pkgconfig/%{name}.pc
+%{_libdir}/openmpi/lib/pkgconfig/netcdf.pc
 %doc %{_libdir}/openmpi/share/man/man3/*.3*
 
 %files openmpi-static
