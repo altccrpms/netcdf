@@ -4,7 +4,13 @@
 #
 conflict	netcdf
 module load	hdf5/@CC@
-prepend-path 	PATH 		@PREFIX@/bin
-prepend-path	MANPATH		@PREFIX@/share/man
-prepend-path 	LD_LIBRARY_PATH @PREFIX@/@LIB@
+
+prepend-path 			PATH 		@PREFIX@/bin
+prepend-path			MANPATH		@PREFIX@/share/man
+prepend-path 			LD_LIBRARY_PATH @PREFIX@/@LIB@
+prepend-path --delim " "	CPPFLAGS	-I@PREFIX@/include
+prepend-path --delim " "	LDFLAGS		-L@PREFIX@/@LIB@
+
 setenv		NETCDF_HOME	@PREFIX@
+setenv		NETCDF_INCLUDE	@PREFIX@/include
+setenv		NETCDF_LIB	@PREFIX@/@LIB@

@@ -223,8 +223,6 @@ pushd build
 export CC=icc
 export CFLAGS="-g -O3 -axSSE2,SSE4.1,SSE4.2"
 module load hdf5/%{_cc_name}
-export CPPFLAGS=-I$HDF5_HOME/include
-export LDFLAGS=-L$HDF5_HOME/%{_lib}
 ln -s ../configure .
 %configure %{configure_opts}
 make %{?_smp_mflags}
@@ -238,8 +236,6 @@ do
   mkdir $mpi
   pushd $mpi
   module load hdf5/$mpi-%{_cc_name}
-  export CPPFLAGS=-I$HDF5_INCLUDE
-  export LDFLAGS=-L$HDF5_LIB
   ln -s ../configure .
   %configure %{configure_opts} \
     --libdir=%{_libdir}/$mpi/lib \
