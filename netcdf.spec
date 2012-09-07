@@ -221,7 +221,7 @@ NetCDF parallel openmpi static libraries
 mkdir build
 pushd build
 export CC=icc
-export CFLAGS="-O3 -axSSE2,SSE4.1,SSE4.2"
+export CFLAGS="-g -O3 -axSSE2,SSE4.1,SSE4.2"
 module load hdf5/%{_cc_name}
 export CPPFLAGS=-I$HDF5_HOME/include
 export LDFLAGS=-L$HDF5_HOME/%{_lib}
