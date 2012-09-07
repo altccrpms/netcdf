@@ -220,9 +220,7 @@ NetCDF parallel openmpi static libraries
 # Serial build
 mkdir build
 pushd build
-export F9X=pgf90
-export FFLAGS="-fast"
-module load hdf5%{?_cc_name_suffix}
+module load hdf5/%{_cc_name}
 export CPPFLAGS=-I$HDF5_HOME/include
 export LDFLAGS=-L$HDF5_HOME/%{_lib}
 ln -s ../configure .
@@ -237,8 +235,7 @@ for mpi in %{mpi_list}
 do
   mkdir $mpi
   pushd $mpi
-  module load mpi/$mpi%{?_cc_name_suffix}
-  module load hdf5-$mpi%{?_cc_name_suffix}
+  module load hdf5/$mpi-%{_cc_name}
   export CPPFLAGS=-I$HDF5_INCLUDE
   export LDFLAGS=-L$HDF5_LIB
   ln -s ../configure .
@@ -257,13 +254,15 @@ done
 
 
 %install
+module load hdf5/%{_cc_name}
 make -C build install DESTDIR=${RPM_BUILD_ROOT}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
+module purge
 for mpi in %{mpi_list}
 do
-  module load mpi/$mpi%{?_cc_name_suffix}
+  module load hdf5/$mpi-%{_cc_name}
   make -C $mpi install DESTDIR=${RPM_BUILD_ROOT}
   rm $RPM_BUILD_ROOT/%{_libdir}/$mpi/lib/*.la
   chrpath --delete ${RPM_BUILD_ROOT}/%{_libdir}/$mpi/bin/nc{copy,dump,gen,gen3}
@@ -272,25 +271,24 @@ done
 
 # AltCCRPMS
 # Make the environment-modules file
-mkdir -p %{buildroot}/etc/modulefiles/netcdf%{?_cc_name_suffix}
+mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}
 # Since we're doing our own substitution here, use our own definitions.
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{?_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/netcdf%{?_cc_name_suffix}/%{version}-%{_arch}
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}-%{_arch}
 for mpi in %{mpi_list}
 do
-mkdir -p %{buildroot}/etc/modulefiles/netcdf-${mpi}%{?_cc_name_suffix}
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{?_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/netcdf-${mpi}%{?_cc_name_suffix}/%{version}-%{_arch}
+mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}-%{_arch}
 done
 
 
 %check
 %ifnarch s390
-module load hdf5%{?_cc_name_suffix}
+module load hdf5/%{_cc_name}
 make -C build check
 module purge
 for mpi in %{mpi_list}
 do
-  module load mpi/$mpi%{?_cc_name_suffix}
-  module load hdf5-$mpi%{?_cc_name_suffix}
+  module load hdf5/$mpi-%{_cc_name}
   make -C $mpi check
   module purge
 done
@@ -308,7 +306,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %doc COPYRIGHT README
-/etc/modulefiles/netcdf%{?_cc_name_suffix}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}-%{_arch}
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
@@ -330,7 +328,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_mpich2}
 %files mpich2
 %doc COPYRIGHT README
-/etc/modulefiles/netcdf-mpich2%{?_cc_name_suffix}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/mpich2-%{_cc_name}/%{version}-%{_arch}
 %{_libdir}/mpich2/bin/nccopy
 %{_libdir}/mpich2/bin/ncdump
 %{_libdir}/mpich2/bin/ncgen
@@ -352,7 +350,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_openmpi}
 %files openmpi
 %doc COPYRIGHT README
-/etc/modulefiles/netcdf-openmpi%{?_cc_name_suffix}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/openmpi-%{_cc_name}/%{version}-%{_arch}
 %{_libdir}/openmpi/bin/nccopy
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
