@@ -5,7 +5,7 @@
 %global _infodir %{_prefix}/share/info
 %global _mandir %{_prefix}/share/man
 
-%global _cc_name pgf
+%global _cc_name intel
 %global _cc_name_suffix -%{_cc_name}
 
 #We don't want to be beholden to the proprietary libraries
@@ -220,6 +220,8 @@ NetCDF parallel openmpi static libraries
 # Serial build
 mkdir build
 pushd build
+export CC=icc
+export CFLAGS="-O3 -axSSE2,SSE4.1,SSE4.2"
 module load hdf5/%{_cc_name}
 export CPPFLAGS=-I$HDF5_HOME/include
 export LDFLAGS=-L$HDF5_HOME/%{_lib}
