@@ -35,7 +35,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
-BuildRequires:  hdf5%{?_cc_name_suffix}-devel >= 1.8.4
+BuildRequires:  hdf5%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  zlib-devel
@@ -45,8 +45,11 @@ BuildRequires:  valgrind
 #mpiexec segfaults if ssh is not present
 #https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
 BuildRequires:  openssh-clients
-Requires:       hdf5%{?_cc_name_suffix} = 1.8.9
+
+# AltCCRPMs
+Requires:       hdf5%{?_cc_name_suffix}%{?_isa} = 1.8.9
 Provides:       %{shortname}%{?_cc_name_suffix} = %{version}-%{release}
+Provides:       %{shortname}%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
 
 %global with_mpich2 0
 %global with_openmpi 1
@@ -105,9 +108,10 @@ Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Requires:       pkgconfig
-Requires:       hdf5%{?_cc_name_suffix}-devel
+Requires:       hdf5%{?_cc_name_suffix}-devel%{?_isa}
 Requires:       libcurl-devel
 Provides:       %{shortname}%{?_cc_name_suffix}-devel = %{version}-%{release}
+Provides:       %{shortname}%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -119,6 +123,7 @@ Summary:        Static libs for netcdf
 Group:          Development/Libraries
 Requires:       %{name} = %{version}-%{release}
 Provides:       %{shortname}%{?_cc_name_suffix}-static = %{version}-%{release}
+Provides:       %{shortname}%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
 
 %description static
 This package contains the netCDF C static libs.
@@ -128,10 +133,12 @@ This package contains the netCDF C static libs.
 %package mpich2
 Summary: NetCDF mpich2 libraries
 Group: Development/Libraries
-Requires: mpich2
-BuildRequires: mpich2-devel
-BuildRequires: hdf5-mpich2%{?_cc_name_suffix}-devel >= 1.8.4
+Requires: mpich2%{?_cc_name_suffix}%{?_isa}
+BuildRequires: mpich2%{?_cc_name_suffix}-devel%{?_isa}
+BuildRequires: hdf5-mpich2%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
+Requires:       hdf5-mpich2%{?_cc_name_suffix}%{?_isa} = 1.8.9
 Provides:       %{shortname}-mpich2%{?_cc_name_suffix} = %{version}-%{release}
+Provides:       %{shortname}-mpich2%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
 
 %description mpich2
 NetCDF parallel mpich2 libraries
@@ -141,11 +148,12 @@ NetCDF parallel mpich2 libraries
 Summary: NetCDF mpich2 development files
 Group: Development/Libraries
 Requires: %{name}-mpich2%{?_isa} = %{version}-%{release}
-Requires: mpich2
+Requires: mpich2%{?_cc_name_suffix}%{?_isa}
 Requires: pkgconfig
-Requires: hdf5-mpich2%{?_cc_name_suffix}-devel
+Requires: hdf5-mpich2%{?_cc_name_suffix}-devel%{?_isa}
 Requires: libcurl-devel
 Provides: %{shortname}-mpich2%{?_cc_name_suffix}-devel = %{version}-%{release}
+Provides: %{shortname}-mpich2%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
 
 %description mpich2-devel
 NetCDF parallel mpich2 development files
@@ -156,6 +164,7 @@ Summary: NetCDF mpich2 static libraries
 Group: Development/Libraries
 Requires: %{name}-mpich2-devel%{?_isa} = %{version}-%{release}
 Provides: %{shortname}-mpich2%{?_cc_name_suffix}-static = %{version}-%{release}
+Provides: %{shortname}-mpich2%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
 
 %description mpich2-static
 NetCDF parallel mpich2 static libraries
@@ -166,10 +175,12 @@ NetCDF parallel mpich2 static libraries
 %package openmpi
 Summary: NetCDF openmpi libraries
 Group: Development/Libraries
-Requires: openmpi
-BuildRequires: openmpi-devel
-BuildRequires: hdf5-openmpi%{?_cc_name_suffix}-devel >= 1.8.4
+Requires: openmpi%{?_cc_name_suffix}%{?_isa}
+BuildRequires: openmpi%{?_cc_name_suffix}-devel%{?_isa}
+BuildRequires: hdf5-openmpi%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
+Requires:       hdf5-openmpi%{?_cc_name_suffix}%{?_isa} = 1.8.9
 Provides:       %{shortname}-openmpi%{?_cc_name_suffix} = %{version}-%{release}
+Provides:       %{shortname}-openmpi%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
 
 %description openmpi
 NetCDF parallel openmpi libraries
@@ -179,11 +190,12 @@ NetCDF parallel openmpi libraries
 Summary: NetCDF openmpi development files
 Group: Development/Libraries
 Requires: %{name}-openmpi%{_isa} = %{version}-%{release}
-Requires: openmpi-devel
+Requires: openmpi%{?_cc_name_suffix}-devel%{?_isa}
 Requires: pkgconfig
-Requires: hdf5-openmpi%{?_cc_name_suffix}-devel
+Requires: hdf5-openmpi%{?_cc_name_suffix}-devel%{?_isa}
 Requires: libcurl-devel
 Provides: %{shortname}-openmpi%{?_cc_name_suffix}-devel = %{version}-%{release}
+Provides: %{shortname}-openmpi%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
 
 %description openmpi-devel
 NetCDF parallel openmpi development files
@@ -194,6 +206,7 @@ Summary: NetCDF openmpi static libraries
 Group: Development/Libraries
 Requires: %{name}-openmpi-devel%{?_isa} = %{version}-%{release}
 Provides: %{shortname}-openmpi%{?_cc_name_suffix}-static = %{version}-%{release}
+Provides: %{shortname}-openmpi%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
 
 %description openmpi-static
 NetCDF parallel openmpi static libraries
@@ -267,13 +280,13 @@ done
 
 # AltCCRPMS
 # Make the environment-modules file
-mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}
+mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}
 # Since we're doing our own substitution here, use our own definitions.
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}-%{_arch}
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}/%{_arch}
 for mpi in %{mpi_list}
 do
-mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}-%{_arch}
+mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}/%{_arch}
 done
 
 
@@ -302,7 +315,7 @@ rm -rf ${RPM_BUILD_ROOT}
 
 %files
 %doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/%{_cc_name}/
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
@@ -324,7 +337,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_mpich2}
 %files mpich2
 %doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/mpich2-%{_cc_name}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/mpich2-%{_cc_name}/
 %{_libdir}/mpich2/bin/nccopy
 %{_libdir}/mpich2/bin/ncdump
 %{_libdir}/mpich2/bin/ncgen
@@ -346,7 +359,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %if %{with_openmpi}
 %files openmpi
 %doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/openmpi-%{_cc_name}/%{version}-%{_arch}
+/etc/modulefiles/%{shortname}/openmpi-%{_cc_name}/
 %{_libdir}/openmpi/bin/nccopy
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
