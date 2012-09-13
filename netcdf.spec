@@ -136,6 +136,7 @@ Group: Development/Libraries
 Requires: mpich2%{?_cc_name_suffix}%{?_isa}
 BuildRequires: mpich2%{?_cc_name_suffix}-devel%{?_isa}
 BuildRequires: hdf5-mpich2%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
+Requires:       hdf5-mpich2%{?_cc_name_suffix}%{?_isa} = 1.8.9
 Provides:       %{shortname}-mpich2%{?_cc_name_suffix} = %{version}-%{release}
 Provides:       %{shortname}-mpich2%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
 
@@ -177,6 +178,7 @@ Group: Development/Libraries
 Requires: openmpi%{?_cc_name_suffix}%{?_isa}
 BuildRequires: openmpi%{?_cc_name_suffix}-devel%{?_isa}
 BuildRequires: hdf5-openmpi%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
+Requires:       hdf5-openmpi%{?_cc_name_suffix}%{?_isa} = 1.8.9
 Provides:       %{shortname}-openmpi%{?_cc_name_suffix} = %{version}-%{release}
 Provides:       %{shortname}-openmpi%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
 
