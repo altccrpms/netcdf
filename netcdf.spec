@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.2.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -317,6 +317,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Mon Dec 03 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-3
+- Rebuild for hdf5 1.8.10
+
 * Thu Nov 1 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-2
 - Rebuild for openmpi and mpich2 soname bumps
 - Use new mpi module location
