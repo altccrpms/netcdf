@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.2.1.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -320,6 +320,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.2.1.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
 * Mon Dec 03 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-3
 - Rebuild for hdf5 1.8.10
 - Disable make check of the mpi code, it is hanging for some reason
