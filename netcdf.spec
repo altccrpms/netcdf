@@ -1,12 +1,12 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        0.2.rc3%{?dist}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}-rc3.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -171,7 +171,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-%{version}-rc3
+%setup -q -n %{name}-%{version}
 %patch0 -p1 -b .pkgconfig
 
 
@@ -262,7 +262,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_bindir}/ncdump
 %{_bindir}/ncgen
 %{_bindir}/ncgen3
-%{_libdir}/*.so.*
+%{_libdir}/*.so.7*
 %{_mandir}/man1/*
 
 %files devel
@@ -283,7 +283,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/mpich2/bin/ncdump
 %{_libdir}/mpich2/bin/ncgen
 %{_libdir}/mpich2/bin/ncgen3
-%{_libdir}/mpich2/lib/*.so.*
+%{_libdir}/mpich2/lib/*.so.7*
 %doc %{_libdir}/mpich2/share/man/man1/*.1*
 
 %files mpich2-devel
@@ -304,7 +304,7 @@ rm -rf ${RPM_BUILD_ROOT}
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
 %{_libdir}/openmpi/bin/ncgen3
-%{_libdir}/openmpi/lib/*.so.*
+%{_libdir}/openmpi/lib/*.so.7*
 %doc %{_libdir}/openmpi/share/man/man1/*.1*
 
 %files openmpi-devel
@@ -320,6 +320,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Mon May 13 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-1
+- Update to 4.3.0
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.2.1.1-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
