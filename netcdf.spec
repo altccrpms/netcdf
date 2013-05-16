@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -320,6 +320,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu May 16 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-2
+- Rebuild for hdf5 1.8.11
+
 * Mon May 13 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-1
 - Update to 4.3.0
 
