@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -10,7 +10,6 @@ Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{versio
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -247,10 +246,6 @@ make -C build check
 %endif
 
 
-%clean
-rm -rf ${RPM_BUILD_ROOT}
-
-
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -320,6 +315,9 @@ rm -rf ${RPM_BUILD_ROOT}
 
 
 %changelog
+* Thu Jul 11 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-3
+- Rebuild for openmpi 1.7.2
+
 * Thu May 16 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-2
 - Rebuild for hdf5 1.8.11
 
