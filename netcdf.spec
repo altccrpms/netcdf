@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -25,12 +25,12 @@ BuildRequires:  valgrind
 BuildRequires:  openssh-clients
 Requires:       hdf5 = %{_hdf5_version}
 
-%global with_mpich2 1
+%global with_mpich 1
 %global with_openmpi 1
 %if 0%{?rhel}
 %ifarch ppc64
 # No mpich2 on ppc64 in EL
-%global with_mpich2 0
+%global with_mpich 0
 %endif
 %endif
 %ifarch s390 s390x
@@ -38,8 +38,8 @@ Requires:       hdf5 = %{_hdf5_version}
 %global with_openmpi 0
 %endif
 
-%if %{with_mpich2}
-%global mpi_list mpich2
+%if %{with_mpich}
+%global mpi_list mpich
 %endif
 %if %{with_openmpi}
 %global mpi_list %{?mpi_list} openmpi
@@ -99,38 +99,44 @@ Requires:       %{name} = %{version}-%{release}
 This package contains the netCDF C static libs.
 
 
-%if %{with_mpich2}
-%package mpich2
-Summary: NetCDF mpich2 libraries
+%if %{with_mpich}
+%package mpich
+Summary: NetCDF mpich libraries
 Group: Development/Libraries
-Requires: mpich2
-BuildRequires: mpich2-devel
-BuildRequires: hdf5-mpich2-devel >= 1.8.4
+Requires: mpich
+BuildRequires: mpich-devel
+BuildRequires: hdf5-mpich-devel >= 1.8.4
+Provides: %{name}-mpich2 = %{version}-%{release}
+Obsoletes: %{name}-mpich2 < 4.3.0-4
 
-%description mpich2
-NetCDF parallel mpich2 libraries
+%description mpich
+NetCDF parallel mpich libraries
 
 
-%package mpich2-devel
-Summary: NetCDF mpich2 development files
+%package mpich-devel
+Summary: NetCDF mpich development files
 Group: Development/Libraries
-Requires: %{name}-mpich2%{?_isa} = %{version}-%{release}
-Requires: mpich2
+Requires: %{name}-mpich%{?_isa} = %{version}-%{release}
+Requires: mpich
 Requires: pkgconfig
-Requires: hdf5-mpich2-devel
+Requires: hdf5-mpich-devel
 Requires: libcurl-devel
+Provides: %{name}-mpich2-devel = %{version}-%{release}
+Obsoletes: %{name}-mpich2-devel < 4.3.0-4
 
-%description mpich2-devel
-NetCDF parallel mpich2 development files
+%description mpich-devel
+NetCDF parallel mpich development files
 
 
-%package mpich2-static
-Summary: NetCDF mpich2 static libraries
+%package mpich-static
+Summary: NetCDF mpich static libraries
 Group: Development/Libraries
-Requires: %{name}-mpich2-devel%{?_isa} = %{version}-%{release}
+Requires: %{name}-mpich-devel%{?_isa} = %{version}-%{release}
+Provides: %{name}-mpich2-static = %{version}-%{release}
+Obsoletes: %{name}-mpich2-static < 4.3.0-4
 
-%description mpich2-static
-NetCDF parallel mpich2 static libraries
+%description mpich-static
+NetCDF parallel mpich static libraries
 %endif
 
 
@@ -271,25 +277,25 @@ make -C build check
 %files static
 %{_libdir}/*.a
 
-%if %{with_mpich2}
-%files mpich2
+%if %{with_mpich}
+%files mpich
 %doc COPYRIGHT README
-%{_libdir}/mpich2/bin/nccopy
-%{_libdir}/mpich2/bin/ncdump
-%{_libdir}/mpich2/bin/ncgen
-%{_libdir}/mpich2/bin/ncgen3
-%{_libdir}/mpich2/lib/*.so.7*
-%doc %{_libdir}/mpich2/share/man/man1/*.1*
+%{_libdir}/mpich/bin/nccopy
+%{_libdir}/mpich/bin/ncdump
+%{_libdir}/mpich/bin/ncgen
+%{_libdir}/mpich/bin/ncgen3
+%{_libdir}/mpich/lib/*.so.7*
+%doc %{_libdir}/mpich/share/man/man1/*.1*
 
-%files mpich2-devel
-%{_libdir}/mpich2/bin/nc-config
-%{_includedir}/mpich2-%{_arch}
-%{_libdir}/mpich2/lib/*.so
-%{_libdir}/mpich2/lib/pkgconfig/%{name}.pc
-%doc %{_libdir}/mpich2/share/man/man3/*.3*
+%files mpich-devel
+%{_libdir}/mpich/bin/nc-config
+%{_includedir}/mpich-%{_arch}
+%{_libdir}/mpich/lib/*.so
+%{_libdir}/mpich/lib/pkgconfig/%{name}.pc
+%doc %{_libdir}/mpich/share/man/man3/*.3*
 
-%files mpich2-static
-%{_libdir}/mpich2/lib/*.a
+%files mpich-static
+%{_libdir}/mpich/lib/*.a
 %endif
 
 %if %{with_openmpi}
@@ -315,6 +321,9 @@ make -C build check
 
 
 %changelog
+* Sat Jul 20 2013 Deji Akingunola <dakingun@gmail.com> - 4.3.0-4
+- Rename mpich2 sub-packages to mpich and rebuild for mpich-3.0
+
 * Thu Jul 11 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-3
 - Rebuild for openmpi 1.7.2
 
