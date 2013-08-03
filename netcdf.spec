@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -321,6 +321,9 @@ make -C build check
 
 
 %changelog
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
 * Sat Jul 20 2013 Deji Akingunola <dakingun@gmail.com> - 4.3.0-4
 - Rename mpich2 sub-packages to mpich and rebuild for mpich-3.0
 
