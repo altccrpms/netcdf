@@ -546,10 +546,10 @@ make -C build check
 - building the library twice (once each for g77 and gfortran) 
   fixes an annoying problem for people who need both compilers
 
-* Fri Sep 29 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
+* Fri Sep 30 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
 - add FFLAGS="-fPIC"
 
-* Fri Jun 13 2005 Ed Hill <ed@eh3.com> - 3.6.0-6.p1
+* Fri Jun 10 2005 Ed Hill <ed@eh3.com> - 3.6.0-6.p1
 - rebuild
 
 * Fri Jun  3 2005 Ed Hill <ed@eh3.com> - 3.6.0-5.p1
@@ -558,7 +558,7 @@ make -C build check
 * Mon May  9 2005 Ed Hill <ed@eh3.com> - 3.6.0-4.p1
 - remove hard-coded dist/fedora macros
 
-* Wed May  5 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
+* Wed May  4 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
 - make netcdf-devel require netcdf (bug #156748)
 - cleanup environment and paths
 
