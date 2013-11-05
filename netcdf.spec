@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -13,6 +13,7 @@ Patch0:         netcdf-pkgconfig.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
+BuildRequires:  hdf-devel
 BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
@@ -189,8 +190,12 @@ NetCDF parallel openmpi static libraries
            --enable-netcdf-4 \\\
            --enable-dap \\\
            --enable-extra-example-tests \\\
+           CPPFLAGS=-I%{_includedir}/hdf \\\
+           LIBS="-ldf -ljpeg" \\\
+           --enable-hdf4 \\\
            --disable-dap-remote-tests \\\
 %{nil}
+export LDFLAGS="%{__global_ldflags} -L%{_libdir}/hdf"
 
 # Serial build
 mkdir build
@@ -321,6 +326,9 @@ make -C build check
 
 
 %changelog
+* Mon Nov 4 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-6
+- Enable hdf4 support
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.0-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
