@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -13,7 +13,7 @@ Patch0:         netcdf-pkgconfig.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
-BuildRequires:  hdf-devel
+BuildRequires:  hdf-static
 BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
@@ -326,6 +326,9 @@ make -C build check
 
 
 %changelog
+* Thu Dec 5 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-7
+- Use BR hdf-static (bug #1038280)
+
 * Mon Nov 4 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-6
 - Enable hdf4 support
 
