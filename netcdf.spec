@@ -326,6 +326,9 @@ make -C build check
 
 
 %changelog
+* Fri Dec 27 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-8
+- Rebuild for hdf5 1.8.12
+
 * Thu Dec 5 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-7
 - Use BR hdf-static (bug #1038280)
 
