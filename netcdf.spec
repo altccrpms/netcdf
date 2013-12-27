@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.0
-Release:        7%{?dist}
+Release:        8%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
