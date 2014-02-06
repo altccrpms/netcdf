@@ -19,6 +19,7 @@ BuildRequires:  hdf-static
 BuildRequires:  hdf5-devel >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
+BuildRequires:  m4
 BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
@@ -330,6 +331,7 @@ make -C build check
 %changelog
 * Thu Feb 6 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-1
 - Update to 4.3.1.1
+- Add BR m4
 
 * Fri Dec 27 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-8
 - Rebuild for hdf5 1.8.12
