@@ -1,12 +1,14 @@
 Name:           netcdf
-Version:        4.3.0
-Release:        8%{?dist}
+Version:        4.3.1.1
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+# Use github tarball - the unidata download is missing files
+Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz
+#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
@@ -177,7 +179,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .pkgconfig
 
 
@@ -326,6 +328,9 @@ make -C build check
 
 
 %changelog
+* Thu Feb 6 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-1
+- Update to 4.3.1.1
+
 * Fri Dec 27 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-8
 - Rebuild for hdf5 1.8.12
 
