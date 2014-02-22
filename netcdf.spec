@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -329,6 +329,9 @@ make -C build check
 
 
 %changelog
+* Sat Feb 22 2014 Deji Akingunola <dakingun@gmail.com> - 4.3.1.1-2
+- Rebuild for mpich-3.1
+
 * Thu Feb 6 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-1
 - Update to 4.3.1.1
 - Add BR m4
