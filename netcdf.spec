@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.1.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -12,6 +12,9 @@ Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 #Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
+# Strip utf-8 character from netcdf.h for now
+# https://github.com/Unidata/netcdf-c/issues/29
+Patch1:         netcdf-utf8.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -182,6 +185,7 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .pkgconfig
+%patch1 -p1 -b .utf8
 
 
 %build
@@ -329,6 +333,10 @@ make -C build check
 
 
 %changelog
+* Fri Mar 7 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-3
+- Strip UTF-8 character from netcdf.h for now, causes problems with
+  netcdf4-python build
+
 * Sat Feb 22 2014 Deji Akingunola <dakingun@gmail.com> - 4.3.1.1-2
 - Rebuild for mpich-3.1
 
