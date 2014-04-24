@@ -1,20 +1,16 @@
 Name:           netcdf
-Version:        4.3.1.1
-Release:        3%{?dist}
+Version:        4.3.2
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 # Use github tarball - the unidata download is missing files
-Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz
+Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
-#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
-#Use pkgconfig in nc-config to avoid multi-lib issues
+# Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
-# Strip utf-8 character from netcdf.h for now
-# https://github.com/Unidata/netcdf-c/issues/29
-Patch1:         netcdf-utf8.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -185,7 +181,6 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .pkgconfig
-%patch1 -p1 -b .utf8
 
 
 %build
@@ -255,12 +250,12 @@ make -C build check
 # This is hanging here:
 # Testing very simple parallel I/O with 4 processors...
 # *** tst_parallel testing very basic parallel access.
-#for mpi in %{mpi_list}
-#do
-#  module load mpi/$mpi-%{_arch}
-#  make -C $mpi check
-#  module purge
-#done
+for mpi in %{mpi_list}
+do
+  module load mpi/$mpi-%{_arch}
+  make -C $mpi check
+  module purge
+done
 %endif
 
 
@@ -270,7 +265,7 @@ make -C build check
 
 
 %files
-%doc COPYRIGHT README
+%doc COPYRIGHT README.md RELEASE_NOTES.md
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
@@ -291,7 +286,7 @@ make -C build check
 
 %if %{with_mpich}
 %files mpich
-%doc COPYRIGHT README
+%doc COPYRIGHT README.md RELEASE_NOTES.md
 %{_libdir}/mpich/bin/nccopy
 %{_libdir}/mpich/bin/ncdump
 %{_libdir}/mpich/bin/ncgen
@@ -312,7 +307,7 @@ make -C build check
 
 %if %{with_openmpi}
 %files openmpi
-%doc COPYRIGHT README
+%doc COPYRIGHT README.md RELEASE_NOTES.md
 %{_libdir}/openmpi/bin/nccopy
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
@@ -333,6 +328,11 @@ make -C build check
 
 
 %changelog
+* Wed Apr 23 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-1
+- Update to 4.3.2
+- Drop utf8 patch fixed upstream
+- Re-enable MPI tests
+
 * Fri Mar 7 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-3
 - Strip UTF-8 character from netcdf.h for now, causes problems with
   netcdf4-python build
