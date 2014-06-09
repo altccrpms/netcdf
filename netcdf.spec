@@ -181,6 +181,10 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .pkgconfig
+%if 0%{?fedora} >= 21
+# No mpi-posix in hdf5 1.8.13
+sed -i -e 's/^.*USE_PARALLEL_POSIX.*$/:/' configure
+%endif
 
 
 %build
