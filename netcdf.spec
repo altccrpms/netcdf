@@ -11,6 +11,8 @@ Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 # Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
+# Upstream patch to support hdf5 1.8.13 mpio change
+Patch1:         netcdf-mpio.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -181,10 +183,7 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .pkgconfig
-%if 0%{?fedora} >= 21
-# No mpi-posix in hdf5 1.8.13
-sed -i -e 's/^.*USE_PARALLEL_POSIX.*$/:/' configure
-%endif
+%patch1 -p1 -b .mpio
 
 
 %build
@@ -333,7 +332,7 @@ done
 
 %changelog
 * Mon Jun 9 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-3
-- Rebuild for hdf5 1.8.13
+- Rebuild for hdf5 1.8.13, add patch for support
 
 * Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.2-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
