@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.2
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -218,6 +218,7 @@ do
   pushd $mpi
   module load mpi/$mpi-%{_arch}
   ln -s ../configure .
+  # parallel tests hang on s390(x)
   %configure %{configure_opts} \
     --libdir=%{_libdir}/$mpi/lib \
     --bindir=%{_libdir}/$mpi/bin \
@@ -225,7 +226,11 @@ do
     --includedir=%{_includedir}/$mpi-%{_arch} \
     --datarootdir=%{_libdir}/$mpi/share \
     --mandir=%{_libdir}/$mpi/share/man \
+    %ifnarch s390 s390x
     --enable-parallel-tests
+    %else
+      %{nil}
+    %endif
   make %{?_smp_mflags}
   module purge
   popd
@@ -248,7 +253,6 @@ done
 
 
 %check
-%ifnarch s390
 make -C build check
 # This is hanging here:
 # Testing very simple parallel I/O with 4 processors...
@@ -259,7 +263,6 @@ do
   make -C $mpi check
   module purge
 done
-%endif
 
 
 %post -p /sbin/ldconfig
@@ -331,6 +334,10 @@ done
 
 
 %changelog
+* Thu Jul 24 2014 Jakub Čajka <jcajka@redhat.com> - 4.3.2-4
+- Enabled tests on s390
+- Disabled parallel tests on s390(x) as they hang
+
 * Mon Jun 9 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-3
 - Rebuild for hdf5 1.8.13, add patch for support
 
