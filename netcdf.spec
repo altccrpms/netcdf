@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.2
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -334,6 +334,9 @@ done
 
 
 %changelog
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
 * Thu Jul 24 2014 Jakub Čajka <jcajka@redhat.com> - 4.3.2-4
 - Enabled tests on s390
 - Disabled parallel tests on s390(x) as they hang
