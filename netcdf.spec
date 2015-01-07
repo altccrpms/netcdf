@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.2
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -334,6 +334,9 @@ done
 
 
 %changelog
+* Wed Jan 07 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-6
+- Rebuild for hdf5 1.8.14
+
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.2-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
 
