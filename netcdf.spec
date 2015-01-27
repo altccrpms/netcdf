@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.2
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -28,7 +28,12 @@ BuildRequires:  valgrind
 #mpiexec segfaults if ssh is not present
 #https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
 BuildRequires:  openssh-clients
-Requires:       hdf5 = %{_hdf5_version}
+Requires:       hdf5%{?_isa} = %{_hdf5_version}
+
+# Don't let mpi versions provide libraries
+%global __provides_exclude_from ^%{_libdir}/(mpich|openmpi)
+# Don't require hdf5 library, might be mpi, use explicit requires
+%global __requires_exclude ^libhdf5
 
 %global with_mpich 1
 %global with_openmpi 1
@@ -85,10 +90,10 @@ NetCDF data is:
 %package devel
 Summary:        Development files for netcdf
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       pkgconfig
-Requires:       hdf5-devel
-Requires:       libcurl-devel
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig%{?_isa}
+Requires:       hdf5-devel%{?_isa}
+Requires:       libcurl-devel%{?_isa}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -98,7 +103,7 @@ man pages.
 %package static
 Summary:        Static libs for netcdf
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description static
 This package contains the netCDF C static libs.
@@ -108,7 +113,8 @@ This package contains the netCDF C static libs.
 %package mpich
 Summary: NetCDF mpich libraries
 Group: Development/Libraries
-Requires: mpich
+Requires: mpich%{?_isa}
+Requires: hdf5-mpich%{?_isa} = %{_hdf5_version}
 BuildRequires: mpich-devel
 BuildRequires: hdf5-mpich-devel >= 1.8.4
 Provides: %{name}-mpich2 = %{version}-%{release}
@@ -122,10 +128,10 @@ NetCDF parallel mpich libraries
 Summary: NetCDF mpich development files
 Group: Development/Libraries
 Requires: %{name}-mpich%{?_isa} = %{version}-%{release}
-Requires: mpich
-Requires: pkgconfig
-Requires: hdf5-mpich-devel
-Requires: libcurl-devel
+Requires: mpich%{?_isa}
+Requires: pkgconfig%{?_isa}
+Requires: hdf5-mpich-devel%{?_isa}
+Requires: libcurl-devel%{?_isa}
 Provides: %{name}-mpich2-devel = %{version}-%{release}
 Obsoletes: %{name}-mpich2-devel < 4.3.0-4
 
@@ -149,7 +155,8 @@ NetCDF parallel mpich static libraries
 %package openmpi
 Summary: NetCDF openmpi libraries
 Group: Development/Libraries
-Requires: openmpi
+Requires: openmpi%{?_isa}
+Requires: hdf5-openmpi%{?_isa} = %{_hdf5_version}
 BuildRequires: openmpi-devel
 BuildRequires: hdf5-openmpi-devel >= 1.8.4
 
@@ -161,10 +168,10 @@ NetCDF parallel openmpi libraries
 Summary: NetCDF openmpi development files
 Group: Development/Libraries
 Requires: %{name}-openmpi%{_isa} = %{version}-%{release}
-Requires: openmpi-devel
-Requires: pkgconfig
-Requires: hdf5-openmpi-devel
-Requires: libcurl-devel
+Requires: openmpi-devel%{?_isa}
+Requires: pkgconfig%{?_isa}
+Requires: hdf5-openmpi-devel%{?_isa}
+Requires: libcurl-devel%{?_isa}
 
 %description openmpi-devel
 NetCDF parallel openmpi development files
@@ -334,6 +341,9 @@ done
 
 
 %changelog
+* Tue Jan 27 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-7
+- Fix up provides/requires for mpi packages, use %%{?_isa}.
+
 * Wed Jan 07 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-6
 - Rebuild for hdf5 1.8.14
 
