@@ -1,18 +1,16 @@
 Name:           netcdf
-Version:        4.3.2
-Release:        7%{?dist}
+Version:        4.3.3
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 # Use github tarball - the unidata download is missing files
-Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+#Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 # Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
-# Upstream patch to support hdf5 1.8.13 mpio change
-Patch1:         netcdf-mpio.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -188,9 +186,8 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q -n %{name}-c-%{version}
+%setup -q
 %patch0 -p1 -b .pkgconfig
-%patch1 -p1 -b .mpio
 
 
 %build
@@ -290,6 +287,8 @@ done
 %doc examples
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
+%{_includedir}/netcdf_meta.h
+%{_libdir}/libnetcdf.settings
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/netcdf.pc
 %{_mandir}/man3/*
@@ -310,6 +309,7 @@ done
 %files mpich-devel
 %{_libdir}/mpich/bin/nc-config
 %{_includedir}/mpich-%{_arch}
+%{_libdir}/mpich/lib/libnetcdf.settings
 %{_libdir}/mpich/lib/*.so
 %{_libdir}/mpich/lib/pkgconfig/%{name}.pc
 %doc %{_libdir}/mpich/share/man/man3/*.3*
@@ -331,6 +331,7 @@ done
 %files openmpi-devel
 %{_libdir}/openmpi/bin/nc-config
 %{_includedir}/openmpi-%{_arch}
+%{_libdir}/openmpi/lib/libnetcdf.settings
 %{_libdir}/openmpi/lib/*.so
 %{_libdir}/openmpi/lib/pkgconfig/%{name}.pc
 %doc %{_libdir}/openmpi/share/man/man3/*.3*
@@ -341,6 +342,9 @@ done
 
 
 %changelog
+* Fri Feb 13 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3-1
+- Update to 4.3.3
+
 * Tue Jan 27 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-7
 - Fix up provides/requires for mpi packages, use %%{?_isa}.
 
