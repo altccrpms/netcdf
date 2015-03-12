@@ -1,5 +1,5 @@
 Name:           netcdf
-Version:        4.3.3
+Version:        4.3.3.1
 Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
@@ -342,6 +342,9 @@ done
 
 
 %changelog
+* Wed Mar 11 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-1
+- Update to 4.3.3.1
+
 * Fri Feb 13 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3-1
 - Update to 4.3.3
 
