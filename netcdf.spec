@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.3.1
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -27,11 +27,6 @@ BuildRequires:  valgrind
 #https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
 BuildRequires:  openssh-clients
 Requires:       hdf5%{?_isa} = %{_hdf5_version}
-
-# Don't let mpi versions provide libraries
-%global __provides_exclude_from ^%{_libdir}/(mpich|openmpi)
-# Don't require hdf5 library, might be mpi, use explicit requires
-%global __requires_exclude ^libhdf5
 
 %global with_mpich 1
 %global with_openmpi 1
@@ -111,7 +106,6 @@ This package contains the netCDF C static libs.
 %package mpich
 Summary: NetCDF mpich libraries
 Group: Development/Libraries
-Requires: mpich%{?_isa}
 Requires: hdf5-mpich%{?_isa} = %{_hdf5_version}
 BuildRequires: mpich-devel
 BuildRequires: hdf5-mpich-devel >= 1.8.4
@@ -126,7 +120,6 @@ NetCDF parallel mpich libraries
 Summary: NetCDF mpich development files
 Group: Development/Libraries
 Requires: %{name}-mpich%{?_isa} = %{version}-%{release}
-Requires: mpich%{?_isa}
 Requires: pkgconfig%{?_isa}
 Requires: hdf5-mpich-devel%{?_isa}
 Requires: libcurl-devel%{?_isa}
@@ -153,7 +146,6 @@ NetCDF parallel mpich static libraries
 %package openmpi
 Summary: NetCDF openmpi libraries
 Group: Development/Libraries
-Requires: openmpi%{?_isa}
 Requires: hdf5-openmpi%{?_isa} = %{_hdf5_version}
 BuildRequires: openmpi-devel
 BuildRequires: hdf5-openmpi-devel >= 1.8.4
@@ -342,6 +334,9 @@ done
 
 
 %changelog
+* Mon Aug 10 2015 Sandro Mani <manisandro@gmail.com> - 4.3.3.1-5
+- Rebuild for RPM MPI Requires Provides Change
+
 * Wed Jul 29 2015 Karsten Hopp <karsten@redhat.com> 4.3.3.1-4
 - mpich is available on ppc64 now
 
