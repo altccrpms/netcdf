@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.3.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -35,7 +35,7 @@ Requires:       hdf5%{?_isa} = %{_hdf5_version}
 
 %global with_mpich 1
 %global with_openmpi 1
-%if 0%{?rhel} <= 6
+%if 0%{?rhel} && 0%{?rhel} <= 6 || 0%{?fedora} && 0%{?fedora} < 20
 %ifarch ppc64
 # No mpich on ppc64 in EL6
 %global with_mpich 0
@@ -342,6 +342,9 @@ done
 
 
 %changelog
+* Wed Jul 29 2015 Karsten Hopp <karsten@redhat.com> 4.3.3.1-4
+- mpich is available on ppc64 now
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.3.1-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
