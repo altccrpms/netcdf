@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.3.3.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -334,6 +334,9 @@ done
 
 
 %changelog
+* Wed Sep 16 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-6
+- Rebuild for openmpi 1.10.0
+
 * Mon Aug 10 2015 Sandro Mani <manisandro@gmail.com> - 4.3.3.1-5
 - Rebuild for RPM MPI Requires Provides Change
 
