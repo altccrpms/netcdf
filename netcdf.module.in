@@ -2,8 +2,7 @@
 #
 #  netcdf module for use with 'environment-modules' package:
 #
-conflict	netcdf
-module load	hdf5/@CC@
+module load	hdf5
 
 prepend-path 			PATH 		@PREFIX@/bin
 prepend-path			MANPATH		@PREFIX@/share/man

@@ -1,12 +1,30 @@
 # AltCCRPMS
-%global _prefix /opt/%{name}/%{version}
+%global _cc_name %{getenv:COMPILER_NAME}
+%global _cc_version %{getenv:COMPILER_VERSION}
+%global _cc_name_ver %{_cc_name}-%{_cc_version}
+%global _mpi_name %{getenv:MPI_NAME}
+%global _mpi_version %{getenv:MPI_VERSION}
+%if "%{_mpi_name}" == ""
+%global _with_mpi 0
+%else
+%global _with_mpi 1
+%endif
+%if 0%{?_with_mpi}
+%global _mpi_name_ver %{_mpi_name}-%{_mpi_version}
+%global _name_suffix -%{_cc_name}-%{_mpi_name}
+%global _name_ver_suffix -%{_cc_name_ver}-%{_mpi_name_ver}
+%global _prefix /opt/%{_cc_name_ver}/%{_mpi_name_ver}/%{shortname}-%{version}
+%global _modulefiledir /opt/modulefiles/MPI/%{_cc_name}/%{_cc_version}/%{_mpi_name}/%{_mpi_version}/%{shortname}
+%else
+%global _name_suffix -%{_cc_name}
+%global _name_ver_suffix -%{_cc_name_ver}
+%global _prefix /opt/%{_cc_name_ver}/%{shortname}-%{version}
+%global _modulefiledir /opt/modulefiles/Compiler/%{_cc_name}/%{_cc_version}/%{shortname}
+%endif
 %global _sysconfdir %{_prefix}/etc
 %global _defaultdocdir %{_prefix}/share/doc
 %global _infodir %{_prefix}/share/info
 %global _mandir %{_prefix}/share/man
-
-%global _cc_name intel
-%global _cc_name_suffix -%{_cc_name}
 
 #We don't want to be beholden to the proprietary libraries
 %global    _use_internal_dependency_generator 0
@@ -17,27 +35,28 @@
 
 %global shortname netcdf
 
-Name:           netcdf42%{?_cc_name_suffix}
-Version:        4.2.1.1
-Release:        1%{?dist}
+Name:           netcdf-4.3.3.1%{_name_ver_suffix}
+Version:        4.3.3.1
+Release:        6%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
+# Use github tarball - the unidata download is missing files
+#Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
-#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/snapshot/netcdf-4-daily.tar.gz
 Source1:        netcdf.module.in
-Source2:        netcdf-mpi.module.in
-#Use pkgconfig in nc-config to avoid multi-lib issues
+# Use pkgconfig in nc-config to avoid multi-lib issues
 Patch0:         netcdf-pkgconfig.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
-BuildRequires:  hdf5%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
+BuildRequires:  hdf-static
+BuildRequires:  hdf5%{_name_suffix}-devel%{?_isa} >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
+BuildRequires:  m4
 BuildRequires:  zlib-devel
 %ifnarch s390 s390x %{arm}
 BuildRequires:  valgrind
@@ -47,29 +66,10 @@ BuildRequires:  valgrind
 BuildRequires:  openssh-clients
 
 # AltCCRPMs
-Requires:       hdf5%{?_cc_name_suffix}%{?_isa} = 1.8.9
-Provides:       %{shortname}%{?_cc_name_suffix} = %{version}-%{release}
-Provides:       %{shortname}%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
+Requires:       hdf5%{_name_suffix}%{?_isa}
+Provides:       %{shortname}%{_name_suffix} = %{version}-%{release}
+Provides:       %{shortname}%{_name_suffix}%{?_isa} = %{version}-%{release}
 
-%global with_mpich2 0
-%global with_openmpi 1
-%if 0%{?rhel}
-%ifarch ppc64
-# No mpich2 on ppc64 in EL
-%global with_mpich2 0
-%endif
-%endif
-%ifarch s390 s390x
-# No openmpi on s390(x)
-%global with_openmpi 0
-%endif
-
-%if %{with_mpich2}
-%global mpi_list mpich2
-%endif
-%if %{with_openmpi}
-%global mpi_list %{?mpi_list} openmpi
-%endif
 
 %description
 NetCDF (network Common Data Form) is an interface for array-oriented 
@@ -106,12 +106,12 @@ NetCDF data is:
 %package devel
 Summary:        Development files for netcdf
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Requires:       pkgconfig
-Requires:       hdf5%{?_cc_name_suffix}-devel%{?_isa}
-Requires:       libcurl-devel
-Provides:       %{shortname}%{?_cc_name_suffix}-devel = %{version}-%{release}
-Provides:       %{shortname}%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Requires:       pkgconfig%{?_isa}
+Requires:       hdf5%{_name_suffix}-devel%{?_isa}
+Requires:       libcurl-devel%{?_isa}
+Provides:       %{shortname}%{_name_suffix}-devel = %{version}-%{release}
+Provides:       %{shortname}%{_name_suffix}-devel%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -121,96 +121,12 @@ man pages.
 %package static
 Summary:        Static libs for netcdf
 Group:          Development/Libraries
-Requires:       %{name} = %{version}-%{release}
-Provides:       %{shortname}%{?_cc_name_suffix}-static = %{version}-%{release}
-Provides:       %{shortname}%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+Provides:       %{shortname}%{_name_suffix}-static = %{version}-%{release}
+Provides:       %{shortname}%{_name_suffix}-static%{?_isa} = %{version}-%{release}
 
 %description static
 This package contains the netCDF C static libs.
-
-
-%if %{with_mpich2}
-%package mpich2
-Summary: NetCDF mpich2 libraries
-Group: Development/Libraries
-Requires: mpich2%{?_cc_name_suffix}%{?_isa}
-BuildRequires: mpich2%{?_cc_name_suffix}-devel%{?_isa}
-BuildRequires: hdf5-mpich2%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
-Requires:       hdf5-mpich2%{?_cc_name_suffix}%{?_isa} = 1.8.9
-Provides:       %{shortname}-mpich2%{?_cc_name_suffix} = %{version}-%{release}
-Provides:       %{shortname}-mpich2%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
-
-%description mpich2
-NetCDF parallel mpich2 libraries
-
-
-%package mpich2-devel
-Summary: NetCDF mpich2 development files
-Group: Development/Libraries
-Requires: %{name}-mpich2%{?_isa} = %{version}-%{release}
-Requires: mpich2%{?_cc_name_suffix}%{?_isa}
-Requires: pkgconfig
-Requires: hdf5-mpich2%{?_cc_name_suffix}-devel%{?_isa}
-Requires: libcurl-devel
-Provides: %{shortname}-mpich2%{?_cc_name_suffix}-devel = %{version}-%{release}
-Provides: %{shortname}-mpich2%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
-
-%description mpich2-devel
-NetCDF parallel mpich2 development files
-
-
-%package mpich2-static
-Summary: NetCDF mpich2 static libraries
-Group: Development/Libraries
-Requires: %{name}-mpich2-devel%{?_isa} = %{version}-%{release}
-Provides: %{shortname}-mpich2%{?_cc_name_suffix}-static = %{version}-%{release}
-Provides: %{shortname}-mpich2%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
-
-%description mpich2-static
-NetCDF parallel mpich2 static libraries
-%endif
-
-
-%if %{with_openmpi}
-%package openmpi
-Summary: NetCDF openmpi libraries
-Group: Development/Libraries
-Requires: openmpi%{?_cc_name_suffix}%{?_isa}
-BuildRequires: openmpi%{?_cc_name_suffix}-devel%{?_isa}
-BuildRequires: hdf5-openmpi%{?_cc_name_suffix}-devel%{?_isa} >= 1.8.4
-Requires:       hdf5-openmpi%{?_cc_name_suffix}%{?_isa} = 1.8.9
-Provides:       %{shortname}-openmpi%{?_cc_name_suffix} = %{version}-%{release}
-Provides:       %{shortname}-openmpi%{?_cc_name_suffix}%{?_isa} = %{version}-%{release}
-
-%description openmpi
-NetCDF parallel openmpi libraries
-
-
-%package openmpi-devel
-Summary: NetCDF openmpi development files
-Group: Development/Libraries
-Requires: %{name}-openmpi%{_isa} = %{version}-%{release}
-Requires: openmpi%{?_cc_name_suffix}-devel%{?_isa}
-Requires: pkgconfig
-Requires: hdf5-openmpi%{?_cc_name_suffix}-devel%{?_isa}
-Requires: libcurl-devel
-Provides: %{shortname}-openmpi%{?_cc_name_suffix}-devel = %{version}-%{release}
-Provides: %{shortname}-openmpi%{?_cc_name_suffix}-devel%{?_isa} = %{version}-%{release}
-
-%description openmpi-devel
-NetCDF parallel openmpi development files
-
-
-%package openmpi-static
-Summary: NetCDF openmpi static libraries
-Group: Development/Libraries
-Requires: %{name}-openmpi-devel%{?_isa} = %{version}-%{release}
-Provides: %{shortname}-openmpi%{?_cc_name_suffix}-static = %{version}-%{release}
-Provides: %{shortname}-openmpi%{?_cc_name_suffix}-static%{?_isa} = %{version}-%{release}
-
-%description openmpi-static
-NetCDF parallel openmpi static libraries
-%endif
 
 
 %prep
@@ -227,108 +143,81 @@ NetCDF parallel openmpi static libraries
            --enable-netcdf-4 \\\
            --enable-dap \\\
            --enable-extra-example-tests \\\
+           CPPFLAGS="-I/usr/include/hdf -I${HDF5_INCLUDE}" \\\
+           LIBS="-L${HDF5_LIB} -ldf -ljpeg" \\\
+           --enable-hdf4 \\\
            --disable-dap-remote-tests \\\
 %{nil}
-
-# Serial build
+export LDFLAGS="%{__global_ldflags} -L/usr/%{_lib}/hdf"
 mkdir build
 pushd build
-export CC=icc
-export CFLAGS="-g -O3 -axSSE2,SSE4.1,SSE4.2"
-module load hdf5/%{_cc_name}
+module load hdf5
 ln -s ../configure .
+%if !0%{?_with_mpi}
+# Serial build
 %configure %{configure_opts}
-make %{?_smp_mflags}
-module purge
-popd
-
+%else
 # MPI builds
 export CC=mpicc
-for mpi in %{mpi_list}
-do
-  mkdir $mpi
-  pushd $mpi
-  module load hdf5/$mpi-%{_cc_name}
-  ln -s ../configure .
-  %configure %{configure_opts} \
-    --libdir=%{_libdir}/$mpi/lib \
-    --bindir=%{_libdir}/$mpi/bin \
-    --sbindir=%{_libdir}/$mpi/sbin \
-    --includedir=%{_includedir}/$mpi-%{_arch} \
-    --datarootdir=%{_libdir}/$mpi/share \
-    --mandir=%{_libdir}/$mpi/share/man \
-    --enable-parallel-tests
-  make %{?_smp_mflags}
-  module purge
-  popd
-done
+%configure %{configure_opts} \
+  --enable-parallel-tests
+%endif
+make %{?_smp_mflags}
+module unload hdf5
+popd
 
 
 %install
-module load hdf5/%{_cc_name}
+module load hdf5
 make -C build install DESTDIR=${RPM_BUILD_ROOT}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
-module purge
-for mpi in %{mpi_list}
-do
-  module load hdf5/$mpi-%{_cc_name}
-  make -C $mpi install DESTDIR=${RPM_BUILD_ROOT}
-  rm $RPM_BUILD_ROOT/%{_libdir}/$mpi/lib/*.la
-  chrpath --delete ${RPM_BUILD_ROOT}/%{_libdir}/$mpi/bin/nc{copy,dump,gen,gen3}
-  module purge
-done
+module unload hdf5
 
 # AltCCRPMS
 # Make the environment-modules file
-mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}
+mkdir -p %{buildroot}%{_modulefiledir}
 # Since we're doing our own substitution here, use our own definitions.
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}/etc/modulefiles/%{shortname}/%{_cc_name}/%{version}/%{_arch}
-for mpi in %{mpi_list}
-do
-mkdir -p %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' -e 's#@MPI@#'$mpi'#' %SOURCE2 > %{buildroot}/etc/modulefiles/%{shortname}/${mpi}-%{_cc_name}/%{version}/%{_arch}
-done
+sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}%{_modulefiledir}/%{version}
 
 
 %check
-%ifnarch s390
-module load hdf5/%{_cc_name}
+module load hdf5
 make -C build check
-module purge
-for mpi in %{mpi_list}
-do
-  module load hdf5/$mpi-%{_cc_name}
-  make -C $mpi check
-  module purge
-done
-%endif
-
-
-%clean
-rm -rf ${RPM_BUILD_ROOT}
-
-
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+module unload hdf5
 
 
 %files
-%doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/%{_cc_name}/
+%doc COPYRIGHT README.md RELEASE_NOTES.md
+%dir %{_prefix}
+%dir %{_bindir}
+%dir %{_libdir}
+%dir %{_datadir}
+#Fails for unknown reason
+#dir %{_defaultdocdir}
+%dir %{_mandir}
+%dir %{_mandir}/man1
+%{_modulefiledir}
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
 %{_bindir}/ncgen3
-%{_libdir}/*.so.*
+%{_libdir}/*.so.7*
 %{_mandir}/man1/*
 
 %files devel
 %doc examples
+%dir %{_includedir}
+%dir %{_libdir}/pkgconfig
+%dir %{_mandir}/man3
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
+%{_includedir}/netcdf_meta.h
+%if 0%{?_with_mpi}
+%{_includedir}/netcdf_par.h
+%endif
+%{_libdir}/libnetcdf.settings
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/netcdf.pc
 %{_mandir}/man3/*
@@ -336,52 +225,99 @@ rm -rf ${RPM_BUILD_ROOT}
 %files static
 %{_libdir}/*.a
 
-%if %{with_mpich2}
-%files mpich2
-%doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/mpich2-%{_cc_name}/
-%{_libdir}/mpich2/bin/nccopy
-%{_libdir}/mpich2/bin/ncdump
-%{_libdir}/mpich2/bin/ncgen
-%{_libdir}/mpich2/bin/ncgen3
-%{_libdir}/mpich2/lib/*.so.*
-%doc %{_libdir}/mpich2/share/man/man1/*.1*
-
-%files mpich2-devel
-%{_libdir}/mpich2/bin/nc-config
-%{_includedir}/mpich2-%{_arch}
-%{_libdir}/mpich2/lib/*.so
-%{_libdir}/mpich2/lib/pkgconfig/netcdf.pc
-%doc %{_libdir}/mpich2/share/man/man3/*.3*
-
-%files mpich2-static
-%{_libdir}/mpich2/lib/*.a
-%endif
-
-%if %{with_openmpi}
-%files openmpi
-%doc COPYRIGHT README
-/etc/modulefiles/%{shortname}/openmpi-%{_cc_name}/
-%{_libdir}/openmpi/bin/nccopy
-%{_libdir}/openmpi/bin/ncdump
-%{_libdir}/openmpi/bin/ncgen
-%{_libdir}/openmpi/bin/ncgen3
-%{_libdir}/openmpi/lib/*.so.*
-%doc %{_libdir}/openmpi/share/man/man1/*.1*
-
-%files openmpi-devel
-%{_libdir}/openmpi/bin/nc-config
-%{_includedir}/openmpi-%{_arch}
-%{_libdir}/openmpi/lib/*.so
-%{_libdir}/openmpi/lib/pkgconfig/netcdf.pc
-%doc %{_libdir}/openmpi/share/man/man3/*.3*
-
-%files openmpi-static
-%{_libdir}/openmpi/lib/*.a
-%endif
-
 
 %changelog
+* Wed Sep 16 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-6
+- Rebuild for openmpi 1.10.0
+
+* Mon Aug 10 2015 Sandro Mani <manisandro@gmail.com> - 4.3.3.1-5
+- Rebuild for RPM MPI Requires Provides Change
+
+* Wed Jul 29 2015 Karsten Hopp <karsten@redhat.com> 4.3.3.1-4
+- mpich is available on ppc64 now
+
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.3.1-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Sun May 17 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-2
+- Rebuild for hdf5 1.8.15
+
+* Wed Mar 11 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-1
+- Update to 4.3.3.1
+
+* Fri Feb 13 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3-1
+- Update to 4.3.3
+
+* Tue Jan 27 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-7
+- Fix up provides/requires for mpi packages, use %%{?_isa}.
+
+* Wed Jan 07 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-6
+- Rebuild for hdf5 1.8.14
+
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.2-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Thu Jul 24 2014 Jakub Čajka <jcajka@redhat.com> - 4.3.2-4
+- Enabled tests on s390
+- Disabled parallel tests on s390(x) as they hang
+
+* Mon Jun 9 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-3
+- Rebuild for hdf5 1.8.13, add patch for support
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.2-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Wed Apr 23 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.2-1
+- Update to 4.3.2
+- Drop utf8 patch fixed upstream
+- Re-enable MPI tests
+
+* Fri Mar 7 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-3
+- Strip UTF-8 character from netcdf.h for now, causes problems with
+  netcdf4-python build
+
+* Sat Feb 22 2014 Deji Akingunola <dakingun@gmail.com> - 4.3.1.1-2
+- Rebuild for mpich-3.1
+
+* Thu Feb 6 2014 Orion Poplawski <orion@cora.nwra.com> - 4.3.1.1-1
+- Update to 4.3.1.1
+- Add BR m4
+
+* Fri Dec 27 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-8
+- Rebuild for hdf5 1.8.12
+
+* Thu Dec 5 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-7
+- Use BR hdf-static (bug #1038280)
+
+* Mon Nov 4 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-6
+- Enable hdf4 support
+
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.3.0-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
+* Sat Jul 20 2013 Deji Akingunola <dakingun@gmail.com> - 4.3.0-4
+- Rename mpich2 sub-packages to mpich and rebuild for mpich-3.0
+
+* Thu Jul 11 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-3
+- Rebuild for openmpi 1.7.2
+
+* Thu May 16 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-2
+- Rebuild for hdf5 1.8.11
+
+* Mon May 13 2013 Orion Poplawski <orion@cora.nwra.com> - 4.3.0-1
+- Update to 4.3.0
+
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 4.2.1.1-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Mon Dec 03 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-3
+- Rebuild for hdf5 1.8.10
+- Disable make check of the mpi code, it is hanging for some reason
+
+* Thu Nov 1 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-2
+- Rebuild for openmpi and mpich2 soname bumps
+- Use new mpi module location
+
 * Fri Aug 3 2012 Orion Poplawski <orion@cora.nwra.com> - 4.2.1.1-1
 - Update to 4.2.1.1
 
@@ -573,10 +509,10 @@ rm -rf ${RPM_BUILD_ROOT}
 - building the library twice (once each for g77 and gfortran) 
   fixes an annoying problem for people who need both compilers
 
-* Fri Sep 29 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
+* Fri Sep 30 2005 Ed Hill <ed@eh3.com> - 3.6.0-7.p1
 - add FFLAGS="-fPIC"
 
-* Fri Jun 13 2005 Ed Hill <ed@eh3.com> - 3.6.0-6.p1
+* Fri Jun 10 2005 Ed Hill <ed@eh3.com> - 3.6.0-6.p1
 - rebuild
 
 * Fri Jun  3 2005 Ed Hill <ed@eh3.com> - 3.6.0-5.p1
@@ -585,7 +521,7 @@ rm -rf ${RPM_BUILD_ROOT}
 * Mon May  9 2005 Ed Hill <ed@eh3.com> - 3.6.0-4.p1
 - remove hard-coded dist/fedora macros
 
-* Wed May  5 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
+* Wed May  4 2005 Ed Hill <ed@eh3.com> - 3.6.0-3.p1
 - make netcdf-devel require netcdf (bug #156748)
 - cleanup environment and paths
 
