@@ -13,3 +13,6 @@ prepend-path --delim " "	LDFLAGS		-L@PREFIX@/@LIB@
 setenv		NETCDF_HOME	@PREFIX@
 setenv		NETCDF_INCLUDE	@PREFIX@/include
 setenv		NETCDF_LIB	@PREFIX@/@LIB@
+
+set ver [lrange [split [ module-info name ] / ] 1 1 ]
+setenv		NETCDF_VERSION	$ver
