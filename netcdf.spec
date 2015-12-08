@@ -1,21 +1,18 @@
 Name:           netcdf
-Version:        4.3.3.1
-Release:        7%{?dist}
+Version:        4.4.0
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-# Use github tarball - the unidata download is missing files
-#Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
-# Use pkgconfig in nc-config to avoid multi-lib issues
-Patch0:         netcdf-pkgconfig.patch
+Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
 BuildRequires:  hdf-static
-BuildRequires:  hdf5-devel >= 1.8.4
+BuildRequires:  hdf5-devel
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  m4
@@ -30,7 +27,7 @@ Requires:       hdf5%{?_isa} = %{_hdf5_version}
 
 %global with_mpich 1
 %global with_openmpi 1
-%if 0%{?rhel} && 0%{?rhel} <= 6 || 0%{?fedora} && 0%{?fedora} < 20
+%if 0%{?rhel} && 0%{?rhel} <= 6
 %ifarch ppc64
 # No mpich on ppc64 in EL6
 %global with_mpich 0
@@ -178,8 +175,7 @@ NetCDF parallel openmpi static libraries
 
 
 %prep
-%setup -q
-%patch0 -p1 -b .pkgconfig
+%setup -q -n %{name}-c-%{version}
 
 
 %build
@@ -249,14 +245,11 @@ done
 
 
 %check
-make -C build check
-# This is hanging here:
-# Testing very simple parallel I/O with 4 processors...
-# *** tst_parallel testing very basic parallel access.
+make -C build check || ( cat build/*/test-suite.log && exit 1 )
 for mpi in %{mpi_list}
 do
   module load mpi/$mpi-%{_arch}
-  make -C $mpi check
+  make -C $mpi check || ( cat $mpi/*/test-suite.log && exit 1 )
   module purge
 done
 
@@ -272,7 +265,7 @@ done
 %{_bindir}/ncdump
 %{_bindir}/ncgen
 %{_bindir}/ncgen3
-%{_libdir}/*.so.7*
+%{_libdir}/*.so.11*
 %{_mandir}/man1/*
 
 %files devel
@@ -280,6 +273,7 @@ done
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
 %{_includedir}/netcdf_meta.h
+%{_includedir}/netcdf_mem.h
 %{_libdir}/libnetcdf.settings
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/netcdf.pc
@@ -295,7 +289,7 @@ done
 %{_libdir}/mpich/bin/ncdump
 %{_libdir}/mpich/bin/ncgen
 %{_libdir}/mpich/bin/ncgen3
-%{_libdir}/mpich/lib/*.so.7*
+%{_libdir}/mpich/lib/*.so.11*
 %doc %{_libdir}/mpich/share/man/man1/*.1*
 
 %files mpich-devel
@@ -317,7 +311,7 @@ done
 %{_libdir}/openmpi/bin/ncdump
 %{_libdir}/openmpi/bin/ncgen
 %{_libdir}/openmpi/bin/ncgen3
-%{_libdir}/openmpi/lib/*.so.7*
+%{_libdir}/openmpi/lib/*.so.11*
 %doc %{_libdir}/openmpi/share/man/man1/*.1*
 
 %files openmpi-devel
@@ -334,6 +328,9 @@ done
 
 
 %changelog
+* Thu Jan 14 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
+- Update to 4.4.0
+
 * Sat Nov 07 2015 Rex Dieter <rdieter@fedoraproject.org> 4.3.3.1-7
 - rebuild (hdf)
 
