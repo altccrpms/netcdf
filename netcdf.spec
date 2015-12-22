@@ -37,7 +37,7 @@
 
 Name:           netcdf-4.3.3.1%{_name_ver_suffix}
 Version:        4.3.3.1
-Release:        6%{?dist}
+Release:        7%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -227,6 +227,9 @@ module unload hdf5
 
 
 %changelog
+* Sat Nov 07 2015 Rex Dieter <rdieter@fedoraproject.org> 4.3.3.1-7
+- rebuild (hdf)
+
 * Wed Sep 16 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-6
 - Rebuild for openmpi 1.10.0
 
