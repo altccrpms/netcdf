@@ -26,10 +26,6 @@
 %global _infodir %{_prefix}/share/info
 %global _mandir %{_prefix}/share/man
 
-#We don't want to be beholden to the proprietary libraries
-%global    _use_internal_dependency_generator 0
-%global    __find_requires %{nil}
-
 # Non gcc compilers don't generate build ids
 %undefine _missing_build_ids_terminate_build
 
@@ -37,7 +33,7 @@
 
 Name:           netcdf-4.3.3.1%{_name_ver_suffix}
 Version:        4.3.3.1
-Release:        7%{?dist}
+Release:        7%{?dist}.1
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -53,7 +49,7 @@ Patch0:         netcdf-pkgconfig.patch
 BuildRequires:  chrpath
 BuildRequires:  doxygen
 BuildRequires:  hdf-static
-BuildRequires:  hdf5%{_name_suffix}-devel%{?_isa} >= 1.8.4
+BuildRequires:  hdf5%{_name_ver_suffix}-devel%{?_isa} >= 1.8.4
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  m4
@@ -66,9 +62,10 @@ BuildRequires:  valgrind
 BuildRequires:  openssh-clients
 
 # AltCCRPMs
-Requires:       hdf5%{_name_suffix}%{?_isa}
 Provides:       %{shortname}%{_name_suffix} = %{version}-%{release}
 Provides:       %{shortname}%{_name_suffix}%{?_isa} = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix} = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix}%{?_isa} = %{version}-%{release}
 
 
 %description
@@ -108,10 +105,12 @@ Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig%{?_isa}
-Requires:       hdf5%{_name_suffix}-devel%{?_isa}
+Requires:       hdf5%{_name_ver_suffix}-devel%{?_isa}
 Requires:       libcurl-devel%{?_isa}
 Provides:       %{shortname}%{_name_suffix}-devel = %{version}-%{release}
 Provides:       %{shortname}%{_name_suffix}-devel%{?_isa} = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix}-devel = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix}-devel%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -124,6 +123,8 @@ Group:          Development/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Provides:       %{shortname}%{_name_suffix}-static = %{version}-%{release}
 Provides:       %{shortname}%{_name_suffix}-static%{?_isa} = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix}-static = %{version}-%{release}
+Provides:       %{shortname}%{_name_ver_suffix}-static%{?_isa} = %{version}-%{release}
 
 %description static
 This package contains the netCDF C static libs.
@@ -227,6 +228,10 @@ module unload hdf5
 
 
 %changelog
+* Tue Dec 22 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-7.1
+- Use rpm-opt-hooks for dependency handling
+- Add version specific provides/requries
+
 * Sat Nov 07 2015 Rex Dieter <rdieter@fedoraproject.org> 4.3.3.1-7
 - rebuild (hdf)
 
