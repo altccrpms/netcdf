@@ -179,6 +179,8 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 %patch0 -p1 -b .char
+# Try to handle builders that can't resolve their own name
+sed -i -s 's/mpiexec/mpiexec -host localhost/' */*.sh
 
 
 %build
