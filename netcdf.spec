@@ -8,6 +8,8 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
 #Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+# Fix inconsistent char definitions
+Patch0:         netcdf-char.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -330,6 +332,7 @@ done
 %changelog
 * Thu Jan 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
 - Update to 4.4.0
+- Add patch to fix incorrect char definitions
 
 * Sat Nov 07 2015 Rex Dieter <rdieter@fedoraproject.org> 4.3.3.1-7
 - rebuild (hdf)

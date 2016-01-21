@@ -1,0 +1,39 @@
+diff -up netcdf-c-4.4.0/libsrc/ncx.c.char netcdf-c-4.4.0/libsrc/ncx.c
+--- netcdf-c-4.4.0/libsrc/ncx.c.char	2016-01-13 14:40:17.000000000 -0700
++++ netcdf-c-4.4.0/libsrc/ncx.c	2016-01-21 11:56:00.142834253 -0700
+@@ -17231,7 +17231,7 @@ ncx_putn_ulonglong_uint(void **xpp, size
+ /* text */
+ 
+ int
+-ncx_getn_text(const void **xpp, size_t nelems, char *tp)
++ncx_getn_text(const void **xpp, size_t nelems, signed char *tp)
+ {
+ 	(void) memcpy(tp, *xpp, nelems);
+ 	*xpp = (void *)((char *)(*xpp) + nelems);
+@@ -17240,7 +17240,7 @@ ncx_getn_text(const void **xpp, size_t n
+ }
+ 
+ int
+-ncx_pad_getn_text(const void **xpp, size_t nelems, char *tp)
++ncx_pad_getn_text(const void **xpp, size_t nelems, signed char *tp)
+ {
+ 	size_t rndup = nelems % X_ALIGN;
+ 
+@@ -17255,7 +17255,7 @@ ncx_pad_getn_text(const void **xpp, size
+ }
+ 
+ int
+-ncx_putn_text(void **xpp, size_t nelems, const char *tp)
++ncx_putn_text(void **xpp, size_t nelems, const signed char *tp)
+ {
+ 	(void) memcpy(*xpp, tp, nelems);
+ 	*xpp = (void *)((char *)(*xpp) + nelems);
+@@ -17265,7 +17265,7 @@ ncx_putn_text(void **xpp, size_t nelems,
+ }
+ 
+ int
+-ncx_pad_putn_text(void **xpp, size_t nelems, const char *tp)
++ncx_pad_putn_text(void **xpp, size_t nelems, const signed char *tp)
+ {
+ 	size_t rndup = nelems % X_ALIGN;
+ 
