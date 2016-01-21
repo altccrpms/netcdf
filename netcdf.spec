@@ -178,6 +178,7 @@ NetCDF parallel openmpi static libraries
 
 %prep
 %setup -q -n %{name}-c-%{version}
+%patch0 -p1 -b .char
 
 
 %build
