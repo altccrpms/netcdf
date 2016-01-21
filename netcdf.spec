@@ -328,7 +328,7 @@ done
 
 
 %changelog
-* Thu Jan 14 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
+* Thu Jan 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
 - Update to 4.4.0
 
 * Sat Nov 07 2015 Rex Dieter <rdieter@fedoraproject.org> 4.3.3.1-7
