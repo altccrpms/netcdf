@@ -1,15 +1,12 @@
 Name:           netcdf
 Version:        4.4.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-#Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
-# Fix inconsistent char definitions
-Patch0:         netcdf-char.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -178,7 +175,7 @@ NetCDF parallel openmpi static libraries
 
 %prep
 %setup -q -n %{name}-c-%{version}
-%patch0 -p1 -b .char
+m4 libsrc/ncx.m4 > libsrc/ncx.c
 # Try to handle builders that can't resolve their own name
 sed -i -s 's/mpiexec/mpiexec -host localhost/' */*.sh
 
@@ -250,12 +247,8 @@ done
 
 
 %check
-# char issues on arm https://github.com/Unidata/netcdf-c/issues/159
-%ifarch %{arm}
-fail=0
-%else
+# Set to 1 to fail if tests fail
 fail=1
-%endif
 make -C build check || ( cat build/*/test-suite.log && exit $fail )
 for mpi in %{mpi_list}
 do
@@ -339,6 +332,9 @@ done
 
 
 %changelog
+* Fri Jan 22 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-2
+- Rebuild ncx.c to fix arm build
+
 * Thu Jan 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
 - Update to 4.4.0
 - Add patch to fix incorrect char definitions
