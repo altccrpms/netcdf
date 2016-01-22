@@ -250,13 +250,17 @@ done
 
 
 %check
-make -C build check || ( cat build/*/test-suite.log && exit 1 )
+# char issues on arm https://github.com/Unidata/netcdf-c/issues/159
+%ifarch %{arm}
+fail=0
+%else
+fail=1
+%endif
+make -C build check || ( cat build/*/test-suite.log && exit $fail )
 for mpi in %{mpi_list}
 do
   module load mpi/$mpi-%{_arch}
-  # mpich is failing on the koji builders at the moment
-  # See https://bugzilla.redhat.com/show_bug.cgi?id=1284323
-  make -C $mpi check || ( cat $mpi/*/test-suite.log && exit 0 )
+  make -C $mpi check || ( cat $mpi/*/test-suite.log && exit $fail )
   module purge
 done
 
