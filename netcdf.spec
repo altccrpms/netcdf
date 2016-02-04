@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.4.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -332,6 +332,9 @@ done
 
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.4.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
 * Fri Jan 22 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-2
 - Rebuild ncx.c to fix arm build
 
