@@ -31,20 +31,16 @@
 
 %global shortname netcdf
 
-Name:           netcdf-4.3.3.1%{_name_ver_suffix}
-Version:        4.3.3.1
-Release:        7%{?dist}.1
+Name:           netcdf-4.4.0%{_name_ver_suffix}
+Version:        4.4.0
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
-# Use github tarball - the unidata download is missing files
-#Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
-Source0:        http://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-%{version}.tar.gz
+Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{shortname}-%{version}.tar.gz
 Source1:        netcdf.module.in
-# Use pkgconfig in nc-config to avoid multi-lib issues
-Patch0:         netcdf-pkgconfig.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -131,8 +127,10 @@ This package contains the netCDF C static libs.
 
 
 %prep
-%setup -q -n netcdf-%{version}
-%patch0 -p1 -b .pkgconfig
+%setup -q -n netcdf-c-%{version}
+m4 libsrc/ncx.m4 > libsrc/ncx.c
+# Try to handle builders that can't resolve their own name
+sed -i -s 's/mpiexec/mpiexec -host localhost/' */*.sh
 
 
 %build
@@ -184,8 +182,10 @@ sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' 
 
 
 %check
+# Set to 1 to fail if tests fail
+fail=1
 module load hdf5
-make -C build check
+make -C build check || ( cat build/*/test-suite.log && exit $fail )
 module unload hdf5
 
 
@@ -204,7 +204,7 @@ module unload hdf5
 %{_bindir}/ncdump
 %{_bindir}/ncgen
 %{_bindir}/ncgen3
-%{_libdir}/*.so.7*
+%{_libdir}/*.so.11*
 %{_mandir}/man1/*
 
 %files devel
@@ -215,6 +215,7 @@ module unload hdf5
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
 %{_includedir}/netcdf_meta.h
+%{_includedir}/netcdf_mem.h
 %if 0%{?_with_mpi}
 %{_includedir}/netcdf_par.h
 %endif
@@ -228,6 +229,16 @@ module unload hdf5
 
 
 %changelog
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.4.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Fri Jan 22 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-2
+- Rebuild ncx.c to fix arm build
+
+* Thu Jan 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-1
+- Update to 4.4.0
+- Add patch to fix incorrect char definitions
+
 * Tue Dec 22 2015 Orion Poplawski <orion@cora.nwra.com> - 4.3.3.1-7.1
 - Use rpm-opt-hooks for dependency handling
 - Add version specific provides/requries
