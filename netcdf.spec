@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.4.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -176,8 +176,6 @@ NetCDF parallel openmpi static libraries
 %prep
 %setup -q -n %{name}-c-%{version}
 m4 libsrc/ncx.m4 > libsrc/ncx.c
-# Try to handle builders that can't resolve their own name
-sed -i -s 's/mpiexec/mpiexec -host localhost/' */*.sh
 
 
 %build
@@ -332,6 +330,9 @@ done
 
 
 %changelog
+* Tue Jun 28 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-4
+- Drop mpiexec hack
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.4.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
