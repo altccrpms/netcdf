@@ -1,6 +1,6 @@
 Name:           netcdf
-Version:        4.4.0
-Release:        4%{?dist}
+Version:        4.4.1
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -330,6 +330,9 @@ done
 
 
 %changelog
+* Wed Jun 29 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-1
+- Update to 4.4.1
+
 * Tue Jun 28 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-4
 - Drop mpiexec hack
 
