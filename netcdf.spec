@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.4.1
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -19,7 +19,7 @@ BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  m4
 BuildRequires:  zlib-devel
-%ifnarch s390 s390x %{arm}
+%ifnarch s390 s390x %{mips}
 BuildRequires:  valgrind
 %endif
 #mpiexec segfaults if ssh is not present
@@ -334,6 +334,10 @@ done
 
 
 %changelog
+* Fri Aug 12 2016 Michal Toman <mtoman@fedoraproject.org> - 4.4.1-3
+- No valgrind on MIPS
+- Enable valgrind on arm
+
 * Thu Jul 7 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-2
 - Add upstream patch to fix hashmap issue
 
