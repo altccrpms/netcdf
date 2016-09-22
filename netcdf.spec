@@ -32,7 +32,7 @@
 %global shortname netcdf
 
 Name:           netcdf-4.4.0%{_name_ver_suffix}
-Version:        4.4.0
+Version:        4.4.1
 Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
@@ -41,6 +41,9 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{shortname}-%{version}.tar.gz
 Source1:        netcdf.module.in
+# Upstream patch to fix hashmap issue
+# https://github.com/Unidata/netcdf-c/issues/282
+Patch0:         netcdf-hashmap.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -50,7 +53,7 @@ BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  m4
 BuildRequires:  zlib-devel
-%ifnarch s390 s390x %{arm}
+%ifnarch s390 s390x %{mips}
 BuildRequires:  valgrind
 %endif
 #mpiexec segfaults if ssh is not present
@@ -127,10 +130,9 @@ This package contains the netCDF C static libs.
 
 
 %prep
-%setup -q -n netcdf-c-%{version}
+%setup -q -n %{shortname}-c-%{version}
+%patch0 -p1 -b .hashmap
 m4 libsrc/ncx.m4 > libsrc/ncx.c
-# Try to handle builders that can't resolve their own name
-sed -i -s 's/mpiexec/mpiexec -host localhost/' */*.sh
 
 
 %build
@@ -229,6 +231,19 @@ module unload hdf5
 
 
 %changelog
+* Fri Aug 12 2016 Michal Toman <mtoman@fedoraproject.org> - 4.4.1-3
+- No valgrind on MIPS
+- Enable valgrind on arm
+
+* Thu Jul 7 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-2
+- Add upstream patch to fix hashmap issue
+
+* Wed Jun 29 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-1
+- Update to 4.4.1
+
+* Tue Jun 28 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.0-4
+- Drop mpiexec hack
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 4.4.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
