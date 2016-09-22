@@ -1,38 +1,9 @@
-# AltCCRPMS
-%global _cc_name %{getenv:COMPILER_NAME}
-%global _cc_version %{getenv:COMPILER_VERSION}
-%global _cc_name_ver %{_cc_name}-%{_cc_version}
-%global _mpi_name %{getenv:MPI_NAME}
-%global _mpi_version %{getenv:MPI_VERSION}
-%if "%{_mpi_name}" == ""
-%global _with_mpi 0
-%else
-%global _with_mpi 1
-%endif
-%if 0%{?_with_mpi}
-%global _mpi_name_ver %{_mpi_name}-%{_mpi_version}
-%global _name_suffix -%{_cc_name}-%{_mpi_name}
-%global _name_ver_suffix -%{_cc_name_ver}-%{_mpi_name_ver}
-%global _prefix /opt/%{_cc_name_ver}/%{_mpi_name_ver}/%{shortname}-%{version}
-%global _modulefiledir /opt/modulefiles/MPI/%{_cc_name}/%{_cc_version}/%{_mpi_name}/%{_mpi_version}/%{shortname}
-%else
-%global _name_suffix -%{_cc_name}
-%global _name_ver_suffix -%{_cc_name_ver}
-%global _prefix /opt/%{_cc_name_ver}/%{shortname}-%{version}
-%global _modulefiledir /opt/modulefiles/Compiler/%{_cc_name}/%{_cc_version}/%{shortname}
-%endif
-%global _sysconfdir %{_prefix}/etc
-%global _defaultdocdir %{_prefix}/share/doc
-%global _infodir %{_prefix}/share/info
-%global _mandir %{_prefix}/share/man
-
-# Non gcc compilers don't generate build ids
-%undefine _missing_build_ids_terminate_build
-
 %global shortname netcdf
+%global ver 4.4.1
+%?altcc_init
 
-Name:           netcdf-4.4.0%{_name_ver_suffix}
-Version:        4.4.1
+Name:           %{shortname}%{?altcc_pkg_suffix}
+Version:        %{ver}
 Release:        3%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
@@ -48,7 +19,7 @@ Patch0:         netcdf-hashmap.patch
 BuildRequires:  chrpath
 BuildRequires:  doxygen
 BuildRequires:  hdf-static
-BuildRequires:  hdf5%{_name_ver_suffix}-devel%{?_isa} >= 1.8.4
+BuildRequires:  hdf5%{?altcc_dep_suffix}-devel
 BuildRequires:  gawk
 BuildRequires:  libcurl-devel
 BuildRequires:  m4
@@ -59,13 +30,8 @@ BuildRequires:  valgrind
 #mpiexec segfaults if ssh is not present
 #https://trac.mcs.anl.gov/projects/mpich2/ticket/1576
 BuildRequires:  openssh-clients
-
-# AltCCRPMs
-Provides:       %{shortname}%{_name_suffix} = %{version}-%{release}
-Provides:       %{shortname}%{_name_suffix}%{?_isa} = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix} = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix}%{?_isa} = %{version}-%{release}
-
+%?altcc_reqmodules
+%?altcc_provide
 
 %description
 NetCDF (network Common Data Form) is an interface for array-oriented 
@@ -104,12 +70,9 @@ Summary:        Development files for netcdf
 Group:          Development/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires:       pkgconfig%{?_isa}
-Requires:       hdf5%{_name_ver_suffix}-devel%{?_isa}
+Requires:       hdf5%{?altcc_dep_suffix}-devel%{?_isa}
 Requires:       libcurl-devel%{?_isa}
-Provides:       %{shortname}%{_name_suffix}-devel = %{version}-%{release}
-Provides:       %{shortname}%{_name_suffix}-devel%{?_isa} = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix}-devel = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix}-devel%{?_isa} = %{version}-%{release}
+%{?altcc:%altcc_provide devel}
 
 %description devel
 This package contains the netCDF C header files, shared devel libs, and 
@@ -120,10 +83,7 @@ man pages.
 Summary:        Static libs for netcdf
 Group:          Development/Libraries
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Provides:       %{shortname}%{_name_suffix}-static = %{version}-%{release}
-Provides:       %{shortname}%{_name_suffix}-static%{?_isa} = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix}-static = %{version}-%{release}
-Provides:       %{shortname}%{_name_ver_suffix}-static%{?_isa} = %{version}-%{release}
+%{?altcc:%altcc_provide static}
 
 %description static
 This package contains the netCDF C static libs.
@@ -152,9 +112,9 @@ m4 libsrc/ncx.m4 > libsrc/ncx.c
 export LDFLAGS="%{__global_ldflags} -L/usr/%{_lib}/hdf"
 mkdir build
 pushd build
-module load hdf5
+%{?altcc:module load hdf5}
 ln -s ../configure .
-%if !0%{?_with_mpi}
+%if !0%{?altcc_with_mpi}
 # Serial build
 %configure %{configure_opts}
 %else
@@ -164,44 +124,33 @@ export CC=mpicc
   --enable-parallel-tests
 %endif
 make %{?_smp_mflags}
-module unload hdf5
+%{?altcc:module unload hdf5}
 popd
 
 
 %install
-module load hdf5
+%{?altcc:module load hdf5}
 make -C build install DESTDIR=${RPM_BUILD_ROOT}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_libdir}/*.la
 chrpath --delete ${RPM_BUILD_ROOT}/%{_bindir}/nc{copy,dump,gen,gen3}
 /bin/rm -f ${RPM_BUILD_ROOT}%{_infodir}/dir
-module unload hdf5
+%{?altcc:module unload hdf5}
 
-# AltCCRPMS
-# Make the environment-modules file
-mkdir -p %{buildroot}%{_modulefiledir}
-# Since we're doing our own substitution here, use our own definitions.
-sed -e 's#@PREFIX@#'%{_prefix}'#' -e 's#@LIB@#%{_lib}#' -e 's#@ARCH@#%{_arch}#' -e 's#@CC@#%{_cc_name}#' %SOURCE1 > %{buildroot}%{_modulefiledir}/%{version}
+%?altcc_doc
+%{?altcc:%altcc_writemodule %SOURCE1}
 
 
 %check
 # Set to 1 to fail if tests fail
 fail=1
-module load hdf5
+%{?altcc:module load hdf5}
 make -C build check || ( cat build/*/test-suite.log && exit $fail )
-module unload hdf5
+%{?altcc:module unload hdf5}
 
 
 %files
+%{?altcc:%altcc_files -dm %{_bindir} %{_libdir} %{_mandir}/man1}
 %doc COPYRIGHT README.md RELEASE_NOTES.md
-%dir %{_prefix}
-%dir %{_bindir}
-%dir %{_libdir}
-%dir %{_datadir}
-#Fails for unknown reason
-#dir %{_defaultdocdir}
-%dir %{_mandir}
-%dir %{_mandir}/man1
-%{_modulefiledir}
 %{_bindir}/nccopy
 %{_bindir}/ncdump
 %{_bindir}/ncgen
@@ -210,15 +159,13 @@ module unload hdf5
 %{_mandir}/man1/*
 
 %files devel
+%{?altcc:%altcc_files -d %{_includedir} %{_libdir}/pkgconfig %{_mandir}/man3}
 %doc examples
-%dir %{_includedir}
-%dir %{_libdir}/pkgconfig
-%dir %{_mandir}/man3
 %{_bindir}/nc-config
 %{_includedir}/netcdf.h
 %{_includedir}/netcdf_meta.h
 %{_includedir}/netcdf_mem.h
-%if 0%{?_with_mpi}
+%if 0%{?altcc_with_mpi}
 %{_includedir}/netcdf_par.h
 %endif
 %{_libdir}/libnetcdf.settings
