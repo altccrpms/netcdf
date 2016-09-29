@@ -7,6 +7,7 @@ module load	hdf5
 prepend-path 			PATH 		@PREFIX@/bin
 prepend-path			MANPATH		@PREFIX@/share/man
 prepend-path 			LD_LIBRARY_PATH @PREFIX@/@LIB@
+prepend-path 			PKG_CONFIG_PATH @PREFIX@/@LIB@/pkgconfig
 prepend-path --delim " "	CPPFLAGS	-I@PREFIX@/include
 prepend-path --delim " "	LDFLAGS		-L@PREFIX@/@LIB@
 
