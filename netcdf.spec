@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.4.1
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -334,6 +334,9 @@ done
 
 
 %changelog
+* Fri Oct 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-4
+- Rebuild for openmpi 2.0
+
 * Fri Aug 12 2016 Michal Toman <mtoman@fedoraproject.org> - 4.4.1-3
 - No valgrind on MIPS
 - Enable valgrind on arm
