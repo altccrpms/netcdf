@@ -7,6 +7,9 @@ Group:          Applications/Engineering
 License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+# Add missing #include "err_macros.h"
+# https://github.com/Unidata/netcdf-c/pull/333
+Patch0:         netcdf-err.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -175,6 +178,7 @@ NetCDF parallel openmpi static libraries
 
 %prep
 %setup -q -n %{name}-c-%{version}
+%patch0 -p1 -b .err
 m4 libsrc/ncx.m4 > libsrc/ncx.c
 
 
@@ -332,6 +336,7 @@ done
 %changelog
 * Tue Nov 29 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-1
 - Update to 4.4.1.1
+- Add patch to fix mpi tests compilation
 
 * Fri Oct 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-4
 - Rebuild for openmpi 2.0
