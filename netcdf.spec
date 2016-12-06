@@ -1,6 +1,6 @@
 Name:           netcdf
 Version:        4.4.1.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -334,6 +334,9 @@ done
 
 
 %changelog
+* Tue Dec 06 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-2
+- Rebuild for hdf5 1.8.18
+
 * Tue Nov 29 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-1
 - Update to 4.4.1.1
 - Add patch to fix mpi tests compilation
