@@ -3,8 +3,8 @@
 %?altcc_init
 
 Name:           %{shortname}%{?altcc_pkg_suffix}
-Version:        %{ver}
-Release:        3%{?dist}
+Version:        %{ver}.1
+Release:        2%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -12,9 +12,9 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{shortname}-%{version}.tar.gz
 Source1:        netcdf.module.in
-# Upstream patch to fix hashmap issue
-# https://github.com/Unidata/netcdf-c/issues/282
-Patch0:         netcdf-hashmap.patch
+# Add missing #include "err_macros.h"
+# https://github.com/Unidata/netcdf-c/pull/333
+Patch0:         netcdf-err.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -91,7 +91,7 @@ This package contains the netCDF C static libs.
 
 %prep
 %setup -q -n %{shortname}-c-%{version}
-%patch0 -p1 -b .hashmap
+%patch0 -p1 -b .err
 m4 libsrc/ncx.m4 > libsrc/ncx.c
 
 
@@ -178,6 +178,16 @@ make -C build check || ( cat build/*/test-suite.log && exit $fail )
 
 
 %changelog
+* Tue Dec 06 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-2
+- Rebuild for hdf5 1.8.18
+
+* Tue Nov 29 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-1
+- Update to 4.4.1.1
+- Add patch to fix mpi tests compilation
+
+* Fri Oct 21 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1-4
+- Rebuild for openmpi 2.0
+
 * Fri Aug 12 2016 Michal Toman <mtoman@fedoraproject.org> - 4.4.1-3
 - No valgrind on MIPS
 - Enable valgrind on arm
