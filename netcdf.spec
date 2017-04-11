@@ -1,10 +1,10 @@
 %global shortname netcdf
 %global ver 4.4.1
-%?altcc_init
+%{?altcc_init:%altcc_init -V %ver}
 
 Name:           %{shortname}%{?altcc_pkg_suffix}
 Version:        %{ver}.1
-Release:        2%{?dist}
+Release:        2%{?dist}.1
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
