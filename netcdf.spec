@@ -1,10 +1,10 @@
 %global shortname netcdf
-%global ver 4.4.1
+%global ver 4.6.0
 %{?altcc_init:%altcc_init -V %ver}
 
 Name:           %{shortname}%{?altcc_pkg_suffix}
-Version:        %{ver}.1
-Release:        2%{?dist}.1
+Version:        %{ver}
+Release:        1%{?dist}
 Summary:        Libraries for the Unidata network Common Data Form
 
 Group:          Applications/Engineering
@@ -12,9 +12,6 @@ License:        NetCDF
 URL:            http://www.unidata.ucar.edu/software/netcdf/
 Source0:        https://github.com/Unidata/netcdf-c/archive/v%{version}.tar.gz#/%{shortname}-%{version}.tar.gz
 Source1:        netcdf.module.in
-# Add missing #include "err_macros.h"
-# https://github.com/Unidata/netcdf-c/pull/333
-Patch0:         netcdf-err.patch
 
 BuildRequires:  chrpath
 BuildRequires:  doxygen
@@ -91,8 +88,7 @@ This package contains the netCDF C static libs.
 
 %prep
 %setup -q -n %{shortname}-c-%{version}
-%patch0 -p1 -b .err
-m4 libsrc/ncx.m4 > libsrc/ncx.c
+#m4 libsrc/ncx.m4 > libsrc/ncx.c
 
 
 %build
@@ -178,6 +174,9 @@ make -C build check || ( cat build/*/test-suite.log && exit $fail )
 
 
 %changelog
+* Tue Feb 6 2018 Orion Poplawski <orion@cora.nwra.com> - 4.6.0-1
+- Update to 4.6.0
+
 * Tue Dec 06 2016 Orion Poplawski <orion@cora.nwra.com> - 4.4.1.1-2
 - Rebuild for hdf5 1.8.18
 
