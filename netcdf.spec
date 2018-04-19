@@ -1,5 +1,5 @@
 %global shortname netcdf
-%global ver 4.6.0
+%global ver 4.6.1
 %{?altcc_init:%altcc_init -V %ver}
 
 Name:           %{shortname}%{?altcc_pkg_suffix}
@@ -88,7 +88,8 @@ This package contains the netCDF C static libs.
 
 %prep
 %setup -q -n %{shortname}-c-%{version}
-#m4 libsrc/ncx.m4 > libsrc/ncx.c
+# We don't have 8 or16 processor threads
+sed -i -e /8/d -e /16/d nc_test4/run_par_test.sh
 
 
 %build
@@ -119,7 +120,7 @@ export CC=mpicc
 %configure %{configure_opts} \
   --enable-parallel-tests
 %endif
-make %{?_smp_mflags}
+make #{?_smp_mflags}
 %{?altcc:module unload hdf5}
 popd
 
@@ -151,7 +152,8 @@ make -C build check || ( cat build/*/test-suite.log && exit $fail )
 %{_bindir}/ncdump
 %{_bindir}/ncgen
 %{_bindir}/ncgen3
-%{_libdir}/*.so.11*
+%{_bindir}/ocprint
+%{_libdir}/*.so.13*
 %{_mandir}/man1/*
 
 %files devel
